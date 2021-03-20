@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Project A</title>
+
+    <!-- update the version number as needed -->
+    <script defer src="/__/firebase/8.2.5/firebase-app.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/8.2.5/firebase-auth.js"></script>
+    <script defer src="/__/firebase/8.2.5/firebase-database.js"></script>
+    <script defer src="/__/firebase/8.2.5/firebase-firestore.js"></script>
+    <script defer src="/__/firebase/8.2.5/firebase-functions.js"></script>
+    <script defer src="/__/firebase/8.2.5/firebase-messaging.js"></script>
+    <script defer src="/__/firebase/8.2.5/firebase-storage.js"></script>
+    <script defer src="/__/firebase/8.2.5/firebase-analytics.js"></script>
+    <script defer src="/__/firebase/8.2.5/firebase-remote-config.js"></script>
+    <script defer src="/__/firebase/8.2.5/firebase-performance.js"></script>
+    <script src="underscore-min.js"></script>
+
+    <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+
+    <!-- 
+      initialize the SDK after all desired features are loaded, set useEmulator to false
+      to avoid connecting the SDK to running emulators.
+    -->
+    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+  </head>
+  <body>
+      <div class="container-lg shadow-sm p-3 bg-white rounded center" id="parentContainer" >
+        <div class="row">
+          <div class="col">
+            <ul class="nav justify-content-center fs-5">
+              <li class="nav-item">
+                <a class="nav-link bi bi-house link-dark" href="/"></a>
+              </li>
+              <li class="nav-item" style="width: 40px;">
+                <img src="/staticFiles/favicon.png" alt="logo" style="width:100%;">
+              </li>
+              <li class="nav-item">
+                <a class="nav-link bi bi-person link-dark" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"></a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="dropdown">
+                  <form class="px-4 py-3" id="loginForm">
+                    <div class="mb-3">
+                      <label for="exampleDropdownFormEmail1" class="form-label">Email address</label>
+                      <input type="email" class="form-control" id="email" placeholder="email@example.com" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="exampleDropdownFormPassword1" class="form-label">Password</label>
+                      <input type="password" class="form-control" id="password" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sign in</button>
+                    <div class="mb-3">
+                      <label for="googleLogin" style="display: block;">You can try using:</label>
+                      <a href="javascript:void(0)" id="googleLogin" class="bi bi-google" onclick="loginUsingGoogle()"></a>
+                    </div>
+                  </form>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="/login" id="signUp">New around here? Sign up</a>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <hr>
+        <!-- Stack the columns on mobile by making one full-width and the other half-width -->
+        <div class="row" id="content" style="min-height: 200px;">
+          <div class="col-lg-8" id="post">
+            <h1>Last uploads</h1>
+            <div class="d-flex justify-content-center" id="spinner">
+              <div class="spinner-grow" role="status" style="width: 6rem; height: 6rem;">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+            <div class="list-group pb-1 pt-1" id="listContent" style="max-height: 500px; overflow:scroll; overflow-x: hidden;">
+            </div>
+          </div>
+          <div class="col" id="user">
+            <h1>Users</h1>
+                <div class="d-flex justify-content-center" id="spinner">
+                  <div class="spinner-grow" role="status" style="width: 6rem; height: 6rem;">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+                <ul class="list-group list-group-flush" id="listUsers">
+                </ul>
+          </div>
+        </div>
+        </div>
+      </div>
+    <script src="script.js"></script>
+  </body>
+</html>

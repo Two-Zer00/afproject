@@ -1,0 +1,36 @@
+{
+  "database": {
+    "rules": "database.rules.json"
+  },
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "**/public/test",
+      "**/public/testFiles"
+    ],
+    "rewrites": [
+      {
+        "source": "/",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/u",
+        "destination": "/u/index.html"
+      },
+      {
+        "source": "/upload",
+        "destination": "/upload/index.html"
+      },
+      {
+        "source": "/login",
+        "destination": "/login/index.html"
+      }
+    ]
+  },
+  "storage": {
+    "rules": "storage.rules"
+  }
+}

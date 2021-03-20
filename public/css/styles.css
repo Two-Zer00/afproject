@@ -1,0 +1,81 @@
+@import url("utilities/loader.css");
+@import url("https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css");
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css");
+.center {
+  height: 100vh;
+  max-height: 100vh;
+}
+#volume::-webkit-slider-thumb {
+  background: #525252;
+}
+
+#volume::-moz-range-thumb {
+  background: #525252;
+}
+/* The loading Class */
+.loading {
+  position: relative;
+  background-color: #3d3d3d52;
+}
+
+.loading text {
+  visibility: hidden;
+}
+
+/* The moving element */
+.loading::after {
+  display: block;
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform: translateX(-100%);
+  background: -webkit-gradient(
+    linear,
+    left top,
+    right top,
+    from(transparent),
+    color-stop(rgba(255, 255, 255, 0.2)),
+    to(transparent)
+  );
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+
+  /* Adding animation */
+  animation: loading 0.8s infinite;
+}
+
+/* Loading Animation */
+@keyframes loading {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.default {
+  width: 50%;
+  min-height: 12px;
+  height: 100%;
+  max-height: 100px;
+}
+
+body {
+  background-color: rgba(206, 206, 206, 0.534);
+}
+@media screen and (min-width: 1000px) {
+  .center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    min-height: 300px;
+    height: auto;
+  }
+}
