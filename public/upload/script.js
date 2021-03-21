@@ -51,10 +51,12 @@ var obj;
 var userInfo = [];
 document.querySelector('#uploadFile').addEventListener('submit',e=>{
     e.preventDefault();
-    let form = e.target;
+    let form = document.getElementById('uploadFile');
     obj={"title":form.title.value,"desc":form.desc.value,"nsfw":form.nsfw.checked};
-    //console.log(form);
-    uploadFiles(form.file.files[0],Date.now());
+    let file = form.file.files[0];
+    if(form.checkValidity() && (file.type).includes('audio')){
+        uploadFiles(file,Date.now());
+    }
 });
 
 function uploadFiles(file,date){

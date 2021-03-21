@@ -7,7 +7,7 @@ window.addEventListener('load',()=>{
     
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
-          userLogged();
+            userLogged();
         } else {
             userNotLogged();
         }
@@ -55,11 +55,11 @@ function createElement(id,obj){
     profileImageContaner.classList.add('col-1','p-0');
     profileImageContaner.style.width = '80px';
     let imageContainer = document.createElement('div');
-    imageContainer.classList.add('rounded-circle','overflow-hidden','border','border-3');
+    imageContainer.classList.add('rounded-circle','overflow-hidden','border','border-3','load','position-relative');
     imageContainer.style.height = "80px";
     let profileImage = document.createElement('img');
-    profileImage.style.height = '100%'
-    profileImage.src = '/staticFiles/profileImageDefault.jpg';
+    profileImage.style.height = '100%';
+    profileImage.classList.add('bg-white');
     getImagesURL(obj.userId,profileImage);
     imageContainer.appendChild(profileImage);
     profileImageContaner.appendChild(imageContainer);
@@ -67,7 +67,7 @@ function createElement(id,obj){
     container.appendChild(profileImageContaner);
 
     let postContainer = document.createElement('div');
-    postContainer.classList.add('col');
+    postContainer.classList.add('col','text-truncate');
 
 
     let subElement = document.createElement('div');
@@ -83,7 +83,9 @@ function createElement(id,obj){
     subElement.appendChild(subElement2);
     
     let subElement3 = document.createElement('p');
-    subElement3.classList.add('mb-1','text-break');
+    subElement3.classList.add('mb-1');
+    subElement3.style.overflow = 'hidden';
+    subElement3.style.textOverflow = 'ellipsis';
     subElement3.textContent = obj.desc;
 
     let subElement4 = document.createElement('small');
@@ -208,11 +210,13 @@ function userNotLogged(){
     console.log('not logged');
     let navAction = document.querySelector('#dropdown');
     for(const item of navAction.children){
-        if(item != navAction.querySelector('#loginForm')){
+        if(item != navAction.querySelector('#loginForm') || item != navAction.querySelector('#signUp') || item != navAction.querySelector('.dropdown-divider')){
             item.style.display = 'none';
         }
     }
     navAction.querySelector('#loginForm').style.display = 'block';
+    navAction.querySelector('#signUp').style.display = 'block';
+    navAction.querySelector('.dropdown-divider').style.display = 'block';
 }
 
 function logout(){
@@ -238,15 +242,18 @@ let userProfileImage = new Array();
 function getImagesURL(id,element){
     firebase.storage().refFromURL('gs://af-project-3d9e5.appspot.com/userPhotos/'+id+'/profileImage.jpg').getDownloadURL().then((url)=>{
         element.src = url;
+        element.parentElement.classList.remove('load');
     }).catch((error)=>{
         console.error(error);
         element.src = '/staticFiles/profileImageDefault.jpg';
+        element.parentElement.parentElement.classList.remove('load');
     });
 }
 
 document.getElementsByTagName('form')[0].addEventListener('submit',(event)=>{
     event.preventDefault();
     const form = event.target;
+    console.log(form);
     if((event.target).checkValidity()){
         firebase.auth().signInWithEmailAndPassword(form.email.value, form.password.value)
         .then((userCredential) => {
@@ -258,6 +265,11 @@ document.getElementsByTagName('form')[0].addEventListener('submit',(event)=>{
         .catch((error) => {
             var errorCode = error.code;
             var errorMessage = error.message;
+            console.log(error);
+            form.querySelector('#messages').textContent = errorMessage;
+            setTimeout(()=>{
+                form.querySelector('#messages').textContent = '';
+            },3000);
         });
     }
 });

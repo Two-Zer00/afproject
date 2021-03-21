@@ -15,25 +15,22 @@ var wavesurfer = WaveSurfer.create({
     container: '#waveform',
     waveColor: 'black',
     partialRender:true,
-    autoCenter:true,
     forceDecode:true,
     cursorWidth:2,
     skipLength:10,
-    fillParent:false,
-    scrollParent:true
+    fillParent:true,
+    barHeight:'5',
+    barMinHeight:'10'
 });
 
 
 wavesurfer.on('ready', function () {
     document.querySelector('#spinner').style.display = 'none';
-    //console.log(wavesurfer.backend.gainNode);
+    document.getElementById('volumeCounter').textContent = this.backend.gainNode.gain.value;
     
 });
 wavesurfer.on('play', function () {
-    document.getElementsByTagName('title')[0].textContent+=' '+data.title||(data.desc).substr(0,10);
-});
-wavesurfer.on('pause', function () {
-    document.getElementsByTagName('title')[0].textContent = 'You\'re not playing anything';
+    document.getElementsByTagName('title')[0].textContent='You\'re listening '+data.title||(data.desc).substr(0,10);
 });
 //let playButton = document.querySelector('#play');
 wavesurfer.on('audioprocess',()=>{
@@ -42,6 +39,12 @@ wavesurfer.on('audioprocess',()=>{
         playButton.children[0].classList.add('bi-pause');
         playButton.children[0].classList.remove('bi-play');
     }
+});
+
+wavesurfer.on('loading', progress=>{
+    document.getElementById('spinner').textContent = progress + '%';
+    document.getElementById('spinner').style.color = 'black';
+    document.getElementById('spinner').style.zIndex = 5;
 });
 
 wavesurfer.on('pause',()=>{
@@ -60,14 +63,6 @@ let playButton = document.querySelector('#play');
 
 playButton.addEventListener('click', function() {
     wavesurfer.playPause();
-    /*if(this.children[0].classList.contains('bi-pause')){
-        this.children[0].classList.add('bi-play');
-        this.children[0].classList.remove('bi-pause');
-    }
-    else if(this.children[0].classList.contains('bi-play')){
-        this.children[0].classList.add('bi-pause');
-        this.children[0].classList.remove('bi-play');
-    }*/
 }, false);
 
 
@@ -77,6 +72,7 @@ window.addEventListener("load",()=>{
     docRef.get().then((doc) => {
         if (doc.exists) {
             //console.log("Document data:", doc.data());
+            data = doc.data();
             initializeAudio(doc.data(),id);
             db.collection("user").doc(doc.data().userId)
                 .get()
@@ -109,7 +105,7 @@ window.addEventListener("load",()=>{
 
 function initializeAudio(obj,id){
     createElement(obj,id);
-    document.getElementsByTagName('title')[0].innerText+=' ' + obj.title || (obj.desc).substr(0, 10);
+    //document.getElementsByTagName('title')[0].innerText+=' ' + obj.title || (obj.desc).substr(0, 10);
     var storage = firebase.storage();
     var starsRef = storage.refFromURL(obj.fileURL);
     // Get the download URL

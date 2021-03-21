@@ -9,8 +9,7 @@ var storage;
 var storageRef;
 var userDetails;
 var newUser = false;
-var myModal;
-document.getElementById('spinnerCardContainer').classList.toggle('d-none');
+var myModal = new bootstrap.Modal(document.getElementById('profileDetailsModal'));
 window.addEventListener("load",()=>{
     db = firebase.firestore();
     storage= firebase.storage();
@@ -26,17 +25,17 @@ window.addEventListener("load",()=>{
                     storage.refFromURL('gs://af-project-3d9e5.appspot.com/userPhotos/'+userDetails.id+'/profileImage.jpg').getDownloadURL().then((url)=>{
                         //console.log(url);
                         userDetails.URLImage = url;
-                        document.getElementById('profilePhoto').src = userDetails.URLImage;
+                        loadImageProfileView(url);
                     }).catch((error)=>{
                         console.error(error);
-                        document.getElementById('profilePhoto').src = '/staticFiles/profileImageDefault.jpg'
+                        loadImageProfileView('../staticFiles/profileImageDefault.jpg');
                     });
                     storage.refFromURL('gs://af-project-3d9e5.appspot.com/userPhotos/'+userDetails.id+'/bannerImage.jpg').getDownloadURL().then((url)=>{
-                        userDetails.URLBannerImage = url;
+                        //userDetails.URLBannerImage = url;
                         loadBannerView(url);
                     }).catch((error)=>{
                         console.error(error);
-                        document.getElementById('bannerImage').src = '/staticFiles/profileImageDefault.jpg'
+                        loadBannerView('../staticFiles/profileImageDefault.jpg');
                     });
                     initializeBreadcrumb(userDetails);
                     loadUserDetails(userDetails);
@@ -75,17 +74,17 @@ window.addEventListener("load",()=>{
                         userDetails.id=user.uid;
                         storage.refFromURL('gs://af-project-3d9e5.appspot.com/userPhotos/'+userDetails.id+'/profileImage.jpg').getDownloadURL().then((url)=>{
                             userDetails.URLImage = url;
-                            document.getElementById('profilePhoto').src = userDetails.URLImage;
+                            loadImageProfileView(url);
                         }).catch((error)=>{
-                            //console.error(error);
-                            document.getElementById('profilePhoto').src = '/staticFiles/profileImageDefault.jpg'
+                            console.error(error);
+                            loadImageProfileView('../staticFiles/profileImageDefault.jpg');
                         });
                         storage.refFromURL('gs://af-project-3d9e5.appspot.com/userPhotos/'+userDetails.id+'/bannerImage.jpg').getDownloadURL().then((url)=>{
                             userDetails.URLBannerImage = url;
                             loadBannerView(url);
                         }).catch((error)=>{
-                            //console.error(error);
-                            document.getElementById('bannerImage').src = '/staticFiles/profileImageDefault.jpg'
+                            console.error(error);
+                            loadBannerView('../staticFiles/profileImageDefault.jpg');
                         });
                         initializeBreadcrumb(userDetails);
                         loadUserDetails(doc.data());
@@ -291,7 +290,7 @@ document.getElementById('saveProfileBtn').addEventListener('click',()=>{
             console.error("Error writing document: ", error);
         });
     }
-    else if(!newUser){
+    else if(!newUser && (profileDetailsform).checkValidity()){
         db.collection("user").doc(user.uid).update(obj)
         .then(() => {
             loadUserDetails(obj);
@@ -325,22 +324,44 @@ function initializeUser(id){
 
     query.get()
     .then((querySnapshot) => {
-        objects = querySnapshot.docs;
-        first = querySnapshot.docs[0];
-        last = querySnapshot.docs[querySnapshot.docs.length-1];
-        document.getElementById('spinnerCardContainer').classList.toggle('d-none');
-        querySnapshot.forEach((doc,i) => {
-            createElement(doc.id,doc.data());
-        });
+        if(querySnapshot.docs.length>0){
+            objects = querySnapshot.docs;
+            first = querySnapshot.docs[0];
+            last = querySnapshot.docs[querySnapshot.docs.length-1];
+            querySnapshot.forEach((doc,i) => {
+                createElement(doc.id,doc.data());
+            });
+        }
+        else{
+            document.getElementById('cardContainerParent').textContent = 'This user had no posts yet.';
+        }
+        document.getElementById('cardContainerParent').classList.remove('load');
     })
     .catch((error) => {
         console.log("Error getting documents: ", error);
     });
 }
+
+function isClear(element){
+    console.log(element.value);
+    let cardContainer = document.getElementById('cardContainer');
+    cardContainer.setAttribute('onscroll','next(this)');
+    if(element.value === ''){
+        while(cardContainer.children.length>0){
+            cardContainer.children[cardContainer.children.length-1].remove();
+        }
+        objects.forEach((doc)=>{
+            console.warn(doc);
+            createElement(doc.id,doc.data());
+        });
+    }
+}
+
 function createElement(id,object){
     let cardElement = document.createElement('div');
     cardElement.classList.add('card', 'text-dark', 'bg-light');
-
+    cardElement.style.height = '100%';
+    cardElement.style.width = '100%';
     let cardHeader = document.createElement('div');
     cardHeader.classList.add('card-header');
 
@@ -401,16 +422,16 @@ function createElement(id,object){
 
     let cardBody = document.createElement('div');
     cardBody.classList.add('card-body');
-    cardBody.style.maxHeight = '200px';
     let cardBodyContent = document.createElement('p');
-    cardBodyContent.classList.add('card-text','text-break','m-0');
+    cardBodyContent.classList.add('card-text','text-break','m-0','text-truncate');
     cardBodyContent.textContent = object.desc;
+    cardBodyContent.style.maxWidth = '300px';
     cardBodyContent.id="bodyContent";
 
     let cardBodyContent1 = document.createElement('p');
     let cardBodyContentFileName = document.createElement('small');
     cardBodyContentFileName.textContent = object.fileName;
-    cardBodyContentFileName.classList.add('text-muted');
+    cardBodyContentFileName.classList.add('text-muted','text-break');
     cardBodyContent1.classList.add('card-text','text-break','text-truncate');
     cardBodyContent1.id="fileName";
     cardBodyContent1.appendChild(cardBodyContentFileName);
@@ -442,28 +463,29 @@ function createElement(id,object){
 
     cardElement.appendChild(cardBody);
     let a = document.createElement('div');
-    a.classList.add('col','mb-3');
+    a.classList.add('col-auto','mb-3');
+    
+    a.style.maxWidth='50%';
+    a.style.minWidth = '33%';
+    a.style.maxHeight='300px';
+    a.style.minHeight = '100px';
     a.appendChild(cardElement);
     document.querySelector("#cardContainer").appendChild(a);
 }
 let objectsFull = false;
 function next(item){
-    document.getElementById('spinnerCardContainer').classList.toggle('d-none');
+    console.log('scrolled to end');
     if(last){
         query
         .startAfter(item)
         .get()
         .then((querySnapshot)=>{
-            document.getElementById('spinnerCardContainer').classList.toggle('d-none');
             last = querySnapshot.docs[querySnapshot.docs.length-1];
             //console.warn(querySnapshot.docs);
             querySnapshot.forEach((doc) => {
                 createElement(doc.id,doc.data());
             });
         });
-    }
-    else{
-        document.getElementById('spinnerCardContainer').classList.toggle('d-none');
     }
 }
 function prev(item){
@@ -554,7 +576,7 @@ function deletePost(id,element,date){
     
 }
 document.getElementById('delete').addEventListener('click',()=>{
-    storageRef.child('audio/'+userInfo[1]+'/'+datePost+'/'+fileName).delete().then(() => {
+    storageRef.child('audio/'+userDetails.id+'/'+datePost+'/'+fileName).delete().then(() => {
         //console.log("file: " + fileName + ' deleted');
         db.collection("post").doc(deletedPostId).delete().then(() => {
             //console.log("Document successfully deleted!");
@@ -566,6 +588,16 @@ document.getElementById('delete').addEventListener('click',()=>{
         });
     }).catch((error) => {
         console.log(error);
+        if(error.code == 'storage/object-not-found'){
+            db.collection("post").doc(deletedPostId).delete().then(() => {
+                //console.log("Document successfully deleted!");
+                let parent = deletedElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement;
+                parent.remove();
+                dangerModal.hide();
+            }).catch((error) => {
+                console.error("Error removing document: ", error);
+            });
+        }
     });
     
 });
@@ -690,7 +722,7 @@ function loadUserDetails(obj){
         console.log(details.children[i]);
         switch (details.children[i].id) {
             case 'profileDetailsUsername':
-                details.children[i].getElementsByTagName('span')[0].textContent = obj.username || details.children[i].textContent ;
+                details.children[i].getElementsByTagName('label')[0].textContent = obj.username || details.children[i].textContent ;
                 document.getElementsByTagName("title")[0].innerText=(obj.username || details.children[i].textContent) + "'s profile";
             break;
             case 'profileMinDetails':
@@ -734,10 +766,12 @@ function loadBannerView(url){
     document.getElementById('bannerImage').style.backgroundRepeat = 'no-repeat';
     document.getElementById('bannerImage').style.backgroundAttachment = 'center';
     document.getElementById('bannerImage').style.backgroundSize = 'cover';
+    document.getElementById('bannerImage').parentElement.classList.remove('load');
 }
 function loadImageProfileView(url){
     document.getElementById('profilePhoto').src = url;
     document.getElementById('profileDetailPhoto').src = url;
+    document.getElementById('profilePhoto').parentElement.classList.remove('load');
 }
 function myAlert(text,time){
     let alert = document.createElement('div');
@@ -767,4 +801,41 @@ function getIndexFromObjects(item){
             return index;
         }
     });
+}
+
+function search(e,element){
+    let cardContainer = document.getElementById('cardContainer');
+    let input = element.value;
+    if((e.key==='Enter' || e.keyCode === 13) && input!=''){
+        document.getElementById('cardContainer').removeAttribute('onscroll');
+        while(cardContainer.children.length>0){
+            cardContainer.children[cardContainer.children.length-1].remove();
+        }
+        console.log(element);
+        db.collection("post")
+        .where("userId", "==" ,id)
+        .get()
+        .then((querySnapshot) => {
+            //console.log(querySnapshot.docs.length);
+            if(querySnapshot.docs.length>1){
+                querySnapshot.forEach((doc,i) => {
+                    let word = doc.data().title;
+                    //onsole.error(((word).toLowerCase()).indexOf(input.toLowerCase()));
+                    if(((word).toLowerCase()).indexOf(input.toLowerCase())!=-1){
+                        createElement(doc.id,doc.data());
+                    }
+                });
+            }
+            else if(querySnapshot.docs.length==1){
+                createElement(querySnapshot.docs[0].id,querySnapshot.docs[0].data());
+            }
+            else{
+                document.getElementById('cardContainerParent').textContent = 'This user had no posts yet.';
+            }
+            document.getElementById('cardContainerParent').classList.remove('load');
+        })
+        .catch((error) => {
+            console.log("Error getting documents: ", error);
+        });
+    }
 }
