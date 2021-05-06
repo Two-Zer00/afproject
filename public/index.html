@@ -29,70 +29,117 @@
     <script defer src="/__/firebase/init.js?useEmulator=true"></script>
   </head>
   <body>
-      <div class="container-lg shadow-sm p-3 bg-white rounded center" id="parentContainer" >
-        <div class="row">
-          <div class="col">
-            <ul class="nav justify-content-center fs-3">
-              <li class="nav-item">
-                <a class="nav-link bi bi-house link-dark" href="/"></a>
-              </li>
-              <li class="nav-item d-flex align-items-center" style="width: 40px;">
-                <img src="/staticFiles/favicon.png" tabindex="-1" alt="logo" clas="user-selection-none" style="width:100%;">
-              </li>
-              <li class="nav-item">
-                <a class="nav-link bi bi-person link-dark" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"></a>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="dropdown">
-                  <form class="px-4 py-3" id="loginForm" style="width: 260px;">
-                    <div class="mb-3">
-                      <label for="exampleDropdownFormEmail1" class="form-label">Email address</label>
-                      <input type="email" class="form-control" id="email" placeholder="email@example.com" required>
-                    </div>
-                    <div class="mb-3">
-                      <label for="exampleDropdownFormPassword1" class="form-label">Password</label>
-                      <input type="password" class="form-control" id="password" placeholder="Password" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Sign in</button>
-                    <div class="mb-3">
-                      <label for="googleLogin" style="display: block;">You can also login using:</label>
-                      <a href="javascript:void(0)" id="googleLogin" class="bi bi-google" onclick="loginUsingGoogle()"></a>
-                    </div>
-                    <div class="mb-3 form-label show fade" id="messages" style="max-width: 100%;">
-                    
-                    </div>
-                  </form>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="/login" id="signUp">New around here? Sign up</a>
-                </div>
-              </li>
-            </ul>
+    <div class="sticky-top bg-white shadow-sm container-lg">
+      <ul class="nav justify-content-center fs-3">
+        <li class="nav-item">
+          <a class="nav-link bi bi-house link-dark" href="/"></a>
+        </li>
+        <li class="nav-item d-flex align-items-center" style="width: 40px;">
+          <img src="/staticFiles/favicon.png" tabindex="-1" alt="logo" clas="user-selection-none" style="width:100%;">
+        </li>
+        <li class="nav-item">
+          <a class="nav-link bi bi-person link-dark" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" href="#"></a>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="dropdown">
+            <form class="px-4 py-3" id="loginForm" style="width: 260px;">
+              <div class="mb-3">
+                <label for="exampleDropdownFormEmail1" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="email" placeholder="email@example.com" required>
+              </div>
+              <div class="mb-3">
+                <label for="exampleDropdownFormPassword1" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" placeholder="Password" required>
+              </div>
+              <button type="submit" class="btn btn-primary">Sign in</button>
+              <div class="">
+                <label for="googleLogin" style="display: block;">You can also login using:</label>
+                <a href="javascript:void(0)" id="googleLogin" class="bi bi-google" onclick="loginUsingGoogle()"></a>
+              </div>
+              <div class="form-label" id="messages" style="max-width: 100%;">
+              
+              </div>
+            </form>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/login" id="signUp">New around here? Sign up</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="container-lg bg-white" id="parentContainer" style="min-height: 50vw;">
+      <div class="row" id="content">
+        <div class="col-lg-8" id="post">
+          <h1>Last uploads</h1>
+          <div class="d-flex justify-content-center" id="spinner">
+            <div class="spinner-grow" role="status" style="width: 6rem; height: 6rem;">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          <div class="list-group pb-1 pt-1" id="listContent">
           </div>
         </div>
-        <hr>
-        <!-- Stack the columns on mobile by making one full-width and the other half-width -->
-        <div class="row" id="content" style="min-height: 200px;">
-          <div class="col-lg-8" id="post">
-            <h1>Last uploads</h1>
+        <div class="col" id="user">
+          <h1>Last users</h1>
             <div class="d-flex justify-content-center" id="spinner">
               <div class="spinner-grow" role="status" style="width: 6rem; height: 6rem;">
                 <span class="visually-hidden">Loading...</span>
               </div>
             </div>
-            <div class="list-group pb-1 pt-1" id="listContent" style="max-height: 500px; overflow:scroll; overflow-x: hidden;">
-            </div>
-          </div>
-          <div class="col" id="user">
-            <h1>Last users</h1>
-                <div class="d-flex justify-content-center" id="spinner">
-                  <div class="spinner-grow" role="status" style="width: 6rem; height: 6rem;">
-                    <span class="visually-hidden">Loading...</span>
-                  </div>
-                </div>
-                <ul class="list-group list-group-flush" id="listUsers">
-                </ul>
-          </div>
-        </div>
+            <ul class="list-group list-group-flush" id="listUsers">
+            </ul>
         </div>
       </div>
+    </div>
+    <!-- Button trigger modal -->
+    <!--<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+      Launch demo modal
+    </button>
+     -->
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Upload audio</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="uploadFile">
+              <div class="form-floating mb-3">
+                  <input type="text" name="title" class="form-control" id="floatingInputGrid" placeholder="title required" required>
+                  <label for="floatingInputGrid">Title</label>
+              </div>
+              <div class="row g-3">
+                  <div class="col-md">
+                      <div class="input-group mb-3">
+                          <input type="file" name="file" class="form-control" id="inputGroupFile02" accept="audio/*" required>
+                      </div>
+                  </div>
+                  <div class="col-md">
+                      <input type="checkbox" name="nsfw" class="btn-check" id="btn-check-outlined" autocomplete="off">
+                      <label class="btn btn-outline-danger d-block" for="btn-check-outlined" data-bs-toggle="tooltip" data-bs-placement="top" title="is this audio NSFW?">NSFW</label>
+                  </div>
+              </div>
+              <div class="form-floating mb-3">
+                  <textarea class="form-control" name="desc" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px; max-height: 300px;"></textarea>
+                  <label for="floatingTextarea2">Description</label>
+              </div>
+              <button type="submit" class="btn btn-outline-secondary mb-2" id="uploadButton" disabled>
+                  <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                  getting your credentials...
+              </button>
+          </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
     <script src="script.js"></script>
   </body>
 </html>

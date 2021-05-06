@@ -78,7 +78,10 @@ function createElement(id,obj){
     subElement1.textContent = obj.title || obj.user[0];
     let subElement2 = document.createElement('small');
     subElement2.textContent = daysAgo(obj.date);
-
+    console.log((daysAgo(obj.date)).indexOf("ago"));
+    if((daysAgo(obj.date)).indexOf("ago")!=-1){
+        subElement2.title = (new Date(obj.date)).toLocaleString();
+    }
     subElement.appendChild(subElement1);
     subElement.appendChild(subElement2);
     
@@ -116,14 +119,8 @@ function daysAgo(date){
 
     var secondsDifference = Math.floor(difference/1000);
 
-    /*console.log('difference = ' + 
-      daysDifference + ' day/s ' + 
-      hoursDifference + ' hour/s ' + 
-      minutesDifference + ' minute/s ' + 
-      secondsDifference + ' second/s ');*/
-
     if(daysDifference>30){
-        return (new Date(date)).toLocaleTimeString();
+        return (new Date(date)).toDateString();
     }
     else if(daysDifference>0){
         return daysDifference + ' day/s ago';
@@ -140,11 +137,10 @@ function daysAgo(date){
     
 }
 
-function checkUser(user){
+/*function checkUser(user){
     let val=false;
     if(users.length>0){
         for(var i=0;i<users.length;i++){
-            //console.log("////",user,users[i],_.isEqual(user,users[i]));
             if(_.isEqual(user,users[i])){
                 val =true;
                 break;
@@ -172,7 +168,7 @@ function sortObj(obj) {
     .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
     console.log(newOBj);
     return sortable[1];
-}
+}*/
 
 function createElementUser(obj){
     let element = document.createElement('a');
@@ -306,4 +302,5 @@ function loginUsingGoogle(){
 document.querySelector('.dropdown-menu').addEventListener('click',(e)=>{
     e.stopPropagation();
 });
+
   
