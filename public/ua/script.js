@@ -37,7 +37,7 @@ window.addEventListener("load",()=>{
                         console.error(error);
                         loadBannerView('../staticFiles/profileImageDefault.jpg');
                     });
-                    initializeBreadcrumb(userDetails);
+                    //initializeBreadcrumb(userDetails);
                     loadUserDetails(userDetails);
                     initializeUser(userDetails.id);
                 } else {
@@ -86,7 +86,7 @@ window.addEventListener("load",()=>{
                             console.error(error);
                             loadBannerView('../staticFiles/profileImageDefault.jpg');
                         });
-                        initializeBreadcrumb(userDetails);
+                        //initializeBreadcrumb(userDetails);
                         loadUserDetails(doc.data());
                         initializeUser(userDetails.id);
                         validateUser(true);
@@ -280,7 +280,6 @@ document.getElementById('saveProfileBtn').addEventListener('click',()=>{
         db.collection("user").doc(user.uid).set(obj)
         .then(() => {
             loadUserDetails(obj);
-            //console.log("Document successfully created!");
             myAlert('Profile details created succesfully');
             setTimeout(()=>{
                 myModal.hide();
@@ -295,8 +294,10 @@ document.getElementById('saveProfileBtn').addEventListener('click',()=>{
         .then(() => {
             loadUserDetails(obj);
             //console.log("Document successfully updated!");
-            myAlert('Profile details updated succesfully',10000);
-            myModal.hide();
+            myAlert('Profile details updated succesfully');
+            setTimeout(()=>{
+                myModal.hide();
+            },500);
         })
         .catch((error) => {
             console.error("Error writing document: ", error);
@@ -359,31 +360,42 @@ function isClear(element){
 
 function createElement(id,object){
     let cardElement = document.createElement('div');
-    cardElement.classList.add('card', 'text-dark', 'bg-light');
-    cardElement.style.height = '100%';
-    cardElement.style.width = '100%';
-    let cardHeader = document.createElement('div');
-    cardHeader.classList.add('card-header');
+    cardElement.classList.add('card','w-100','mb-2','position-relative');
+    //let cardHeader = document.createElement('div');
+    //cardHeader.classList.add('card-header');
 
     
 
-    let cardHeaderText = document.createElement('div');
-    cardHeaderText.classList.add('d-inline-block','text-truncate');
-    cardHeaderText.style.width = '89%';
+    let cardHeaderText = document.createElement('h5');
+    cardHeaderText.classList.add('card-title');
     cardHeaderText.textContent = object.title;
     cardHeaderText.id="headerText";
     
-    cardHeader.appendChild(cardHeaderText);
+    //cardHeader.appendChild(cardHeaderText);
+
+    
+    
+    //cardElement.appendChild(cardHeader);
+
+    let cardBody = document.createElement('div');
+    cardBody.classList.add('card-body');
+    let cardBodyContent = document.createElement('p');
+    cardBodyContent.classList.add('card-text','text-break','m-0');
+    cardBodyContent.textContent = object.desc;
+    cardBodyContent.id="bodyContent";
+
 
     if(userValidate){
         let cardHeaderOptions = document.createElement('div');
         cardHeaderOptions.classList.add('d-inline-block','text-end');
         cardHeaderOptions.style.width = '10%';
         let dropdown = document.createElement('div');
-        dropdown.classList.add('dropdown');
+        dropdown.classList.add('dropdown','p-3','position-absolute','top-0','end-0');
+        dropdown.style.zIndex = '5';
+        dropdown.style.transform = 'rotate(0)';
         let dropdownBtn = document.createElement('a');
         dropdownBtn.id = 'dropdownButton';
-        dropdownBtn.classList.add('link-dark','bi','bi-three-dots-vertical');
+        dropdownBtn.classList.add('link-dark','bi','bi-three-dots-vertical','streched-link');
         dropdownBtn.setAttribute('data-bs-toggle','dropdown');
         dropdownBtn.setAttribute('aria-expanded','false');
         let dropdownList = document.createElement('ul');
@@ -414,19 +426,10 @@ function createElement(id,object){
         
 
         dropdown.appendChild(dropdownList);
-        cardHeaderOptions.appendChild(dropdown);
-        cardHeader.appendChild(cardHeaderOptions);
+        //cardHeaderOptions.appendChild(dropdown);
+        //cardHeader.appendChild(cardHeaderOptions);
+        cardElement.appendChild(dropdown);
     }
-    
-    cardElement.appendChild(cardHeader);
-
-    let cardBody = document.createElement('div');
-    cardBody.classList.add('card-body');
-    let cardBodyContent = document.createElement('p');
-    cardBodyContent.classList.add('card-text','text-break','m-0','text-truncate');
-    cardBodyContent.textContent = object.desc;
-    cardBodyContent.style.maxWidth = '300px';
-    cardBodyContent.id="bodyContent";
 
     let cardBodyContent1 = document.createElement('p');
     let cardBodyContentFileName = document.createElement('small');
@@ -438,6 +441,7 @@ function createElement(id,object){
     
     
     
+    cardBody.appendChild(cardHeaderText);
     cardBody.appendChild(cardBodyContent);
     cardBody.appendChild(cardBodyContent1);
     if(object.nsfw){
@@ -462,15 +466,10 @@ function createElement(id,object){
     cardBody.style.transform = 'rotate(0)';
 
     cardElement.appendChild(cardBody);
-    let a = document.createElement('div');
-    a.classList.add('col-auto','mb-3');
-    
-    a.style.maxWidth='50%';
-    a.style.minWidth = '33%';
-    a.style.maxHeight='300px';
-    a.style.minHeight = '100px';
-    a.appendChild(cardElement);
-    document.querySelector("#cardContainer").appendChild(a);
+    /*let a = document.createElement('div');
+    a.classList.add('col-6','mb-3');
+    a.appendChild(cardElement);*/
+    document.querySelector("#cardContainer").appendChild(cardElement);
 }
 let objectsFull = false;
 function next(item){
@@ -527,11 +526,21 @@ function prev(item){
 
 function loadNext(e){
     if (e.offsetHeight + e.scrollTop >= e.scrollHeight) {
-        next(last);
+        
     }
 }
 
+window.onscroll = function() {
+    var d = document.documentElement;
+    var offset = d.scrollTop + window.innerHeight;
+    var height = d.offsetHeight;
 
+    if (offset >= height) {
+        next(last);
+    }
+};
+
+/*
 function initializeBreadcrumb(obj){
     document.getElementsByTagName("title")[0].innerText=obj.username + "'s profile";
     //console.info(obj);
@@ -541,7 +550,7 @@ function initializeBreadcrumb(obj){
     userElement.setAttribute('aria-current','page');
     userElement.textContent = obj.username;
     breadcrumb.appendChild(userElement);
-}
+}*/
 function createElementAdmin(id,object){
     
     //console.log(id);
@@ -728,12 +737,17 @@ function loadUserDetails(obj){
             case 'profileMinDetails':
                 if(obj.gender==0){
                     (details.children[i]).querySelector('#profileDetailsGender').textContent = 'Female'; 
+                    
+                    (details.children[i]).querySelector('#profileDetailsGender').innerHTML += '&#9792;'; 
                 }
                 else if(obj.gender==1){
                     (details.children[i]).querySelector('#profileDetailsGender').textContent = 'Male'; 
+                    
+                    (details.children[i]).querySelector('#profileDetailsGender').innerHTML += '&#9794;'; 
                 }
                 else{
-                    (details.children[i]).querySelector('#profileDetailsGender').textContent = 'No specify'; 
+                    (details.children[i]).querySelector('#profileDetailsGender').textContent = 'No specify '; 
+                    (details.children[i]).querySelector('#profileDetailsGender').innerHTML += '&#9793;'; 
                 }
             break;
             case 'profileDetailsDesc':
@@ -741,7 +755,7 @@ function loadUserDetails(obj){
             break;
             case 'creationTime':
                 if(obj.creationTime){
-                    (details.children[i]).textContent = 'User from '+ (new Date(obj.creationTime || '21 Aug 2021')).toDateString();
+                    (details.children[i]).textContent = 'User since '+ (new Date(obj.creationTime || '21 Aug 2021')).toDateString();
                 }
                 else{
                     (details.children[i]).textContent = '';
@@ -759,14 +773,14 @@ function validateUser(val){
     }
 }
 function loadBannerView(url){
-    document.getElementById('bannerImage').style.filter = 'blur(4px)';
+    document.getElementById('bannerImage').style.filter = 'blur(2px)';
     document.getElementById('bannerImage').style.backgroundImage = 'url("'+url+'")';
     document.getElementById('bannerImage').style.backgroundColor = 'transparent';
     document.getElementById('bannerImage').style.backgroundPosition = 'center';
     document.getElementById('bannerImage').style.backgroundRepeat = 'no-repeat';
     document.getElementById('bannerImage').style.backgroundAttachment = 'center';
     document.getElementById('bannerImage').style.backgroundSize = 'cover';
-    document.getElementById('bannerImage').parentElement.classList.remove('load');
+    document.getElementById('bannerImage').classList.remove('load');
 }
 function loadImageProfileView(url){
     document.getElementById('profilePhoto').src = url;
@@ -785,7 +799,7 @@ function myAlert(text,time){
     if(!time){
         setTimeout(()=>{
             bsAlert.close();
-        },5000);
+        },2500);
     }
     else{
         setTimeout(()=>{

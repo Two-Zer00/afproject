@@ -18,7 +18,7 @@
       },
       {
         "source": "/u",
-        "destination": "/u/index.html"
+        "destination": "/u.html"
       },
       {
         "source": "/upload",

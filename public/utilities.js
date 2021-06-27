@@ -165,3 +165,28 @@ function daysAgo(date){
     
 }
 
+function charCounter(str){
+    let total = str.length;
+    return total;
+}
+function myAlert(text,time){
+    let alert = document.createElement('div');
+    alert.classList.add('alert','alert-success','fade','show','position-absolute','top-0','start-50','translate-middle-x');
+    alert.style.zIndex = '5';
+    alert.style.width = '100%';
+    alert.setAttribute('role','alert')
+    alert.textContent = text;
+    document.getElementById('alertContainer').appendChild(alert);
+    var bsAlert = new bootstrap.Alert(alert)
+    if(!time){
+        setTimeout(()=>{
+            bsAlert.close();
+        },1000);
+    }
+    else{
+        setTimeout(()=>{
+            bsAlert.close();
+        },time);
+    }
+}
+

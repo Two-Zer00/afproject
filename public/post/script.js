@@ -152,7 +152,7 @@ function initializeBreadcrumb(obj,id){
     let userLink = document.createElement('a');
     userElement.classList.add('breadcrumb-item');
     userLink.classList.add('link-dark');
-    userLink.href = '/u/?id='+obj.id;
+    userLink.href = '/u?id='+obj.id;
     userLink.textContent = obj.username;
     if(obj.nsfw){
         let nsfwBadge = document.createElement('span');

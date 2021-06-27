@@ -88,7 +88,7 @@ function createElement(id,obj){
 }
 function createElementUser(obj){
     let element = document.createElement('a');
-    element.href = "u/?id="+obj.id;
+    element.href = "u?id="+obj.id;
     element.textContent = obj.username;
     element.classList.add('list-group-item', 'list-group-item-action');
     document.querySelector('#listUsers').appendChild(element);
