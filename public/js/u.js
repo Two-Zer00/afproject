@@ -331,6 +331,7 @@ function validateUser(val){
         userValidate = val;
         document.getElementById('editBtn').classList.toggle('disabled');
         document.getElementById('editBtn').classList.toggle('d-none');
+        document.getElementById('editImageContainer').classList.toggle('pe-none');
     }
 }
 function next(item){
