@@ -10,21 +10,13 @@ let postInUse = '';
 let postElementInUse;
 var userValidate;
 let clipboard = new ClipboardJS('.copyLink');
+const colorThief = new ColorThief();
+let image = document.getElementById('profileImage');
+
 window.addEventListener('load',()=>{
     storage = firebase.storage();
     db = firebase.firestore(); 
     //console.log(userInfo);
-
-    let image = document.getElementById('image');
-    const colorThief = new ColorThief();
-    image.addEventListener('load', function() {
-        const color = 'rgb('+colorThief.getColor(image)[0] +','+ colorThief.getColor(image)[1]+','+colorThief.getColor(image)[2]+')';
-        image.parentElement.style.backgroundColor = color;
-        console.log(pickTextColorBasedOnBgColorAdvanced(color,'#FFFFFF','#000000'));
-        document.getElementById('shareDots').style.color = pickTextColorBasedOnBgColorAdvanced(color,'#fff','#000');
-    });
-
-
     if(id){
         getUserInfo(db,id);
         getImageURL(storage,id,image);
@@ -78,23 +70,26 @@ window.addEventListener('load',()=>{
 });
 
 clipboard.on('success', function(e) {
-    toast('link saved in clipboard',2000);
+    toast('Link saved in clipboard!',2000);
     //e.clearSelection();
 });
 
 
 function toast(text,time){
-
-
     let toastContainer = document.getElementById('toastContainer');
-
     let toastHTML =
     '<div class=\"toast align-items-center\" role=\"alert\" aria-live=\"assertive\" aria-atomic=\"true\">' +
-        '<div class=\"d-flex\">'+
-            '<div class=\"toast-body\">'+
-                text+
+        '<div class=\"fs-6\">'+
+            '<div class=\"row\" style=\"height:60px;\">'+
+                '<div class=\"col-auto d-flex align-items-center bg-secondary bi bi-clipboard-check text-light rounded-start\">'+
+                '</div>'+
+                '<div class=\"col d-flex align-items-center\">'+
+                    text+
+                '</div>'+
+                '<div class=\"col-auto d-flex align-items-center border-start\">'+
+                    '<a class=\"me-2 text-decoration-none link-dark fw-bolder\" data-bs-dismiss=\"toast\" aria-label=\"Close\" href=\"javascript:void(0)\">Dismiss</a>'+
+                '</div>'+
             '</div>'+
-            '<button type=\"button\" class=\"btn-close me-2 m-auto\" data-bs-dismiss=\"toast\" aria-label=\"Close\"></button>'+
         '</div>'+
     '</div>';
 
@@ -105,7 +100,6 @@ function toast(text,time){
     }
     let toast = new bootstrap.Toast(toastContainer.querySelector('.toast'),{animation:true,autohide:true,delay:time});
     toast.show();
-
     toastContainer.addEventListener('hidden.bs.toast',()=>{
         toast.dispose();
     });
@@ -675,4 +669,12 @@ document.getElementById('profileImage').addEventListener('change',(event)=>{
         );
         spinnerCont.remove();
     }
+});
+
+image.addEventListener('load', function() {
+    const colorRGB = colorThief.getColor(image);
+    const color = 'rgb('+colorRGB[0] +','+ colorRGB[1]+','+colorRGB[2]+')';
+    image.parentElement.style.backgroundColor = color;
+    console.log(pickTextColorBasedOnBgColorAdvanced(color,'#FFFFFF','#000000'));
+    document.getElementById('shareDots').style.color = pickTextColorBasedOnBgColorAdvanced(color,'#fff','#000');
 });
