@@ -5,19 +5,26 @@ let newUser = false;
 let post={};
 let profileUpdateFormModal = new bootstrap.Modal(document.getElementById('profileDetailsModal'));
 let postUpdateFormModal = new bootstrap.Modal(document.getElementById('postOptions'));
+let newProfileUpdate = new bootstrap.Modal(document.getElementById('profileDetailsModal'),{keyboard:false,backdrop:'static'});
 let postInUse = '';
 let postElementInUse;
 var userValidate;
+let clipboard = new ClipboardJS('.copyLink');
 window.addEventListener('load',()=>{
     storage = firebase.storage();
     db = firebase.firestore(); 
     //console.log(userInfo);
+
     let image = document.getElementById('image');
     const colorThief = new ColorThief();
     image.addEventListener('load', function() {
         const color = 'rgb('+colorThief.getColor(image)[0] +','+ colorThief.getColor(image)[1]+','+colorThief.getColor(image)[2]+')';
         image.parentElement.style.backgroundColor = color;
+        console.log(pickTextColorBasedOnBgColorAdvanced(color,'#FFFFFF','#000000'));
+        document.getElementById('shareDots').style.color = pickTextColorBasedOnBgColorAdvanced(color,'#fff','#000');
     });
+
+
     if(id){
         getUserInfo(db,id);
         getImageURL(storage,id,image);
@@ -51,12 +58,12 @@ window.addEventListener('load',()=>{
                         userDetails = new Object();
                         userDetails.id=user.uid;
                         newUser = true;
-                        myModal = new bootstrap.Modal(document.getElementById('profileDetailsModal'),{keyboard:false,backdrop:'static'});
-                        myModalEl.getElementsByClassName('modal-header')[0].getElementsByTagName('button')[0].disabled = true;
-                        myModalEl.getElementsByClassName('modal-footer')[0].getElementsByTagName('button')[0].disabled = true;
+                        let profileDetailsModal = document.getElementById('profileDetailsModal'); 
+                        profileDetailsModal.getElementsByClassName('modal-header')[0].getElementsByTagName('button')[0].disabled = true;
+                        profileDetailsModal.getElementsByClassName('modal-body')[0].getElementsByTagName('button')[0].disabled = true;
                         //console.warn(myModalEl.getElementsByClassName('modal-body')[0].children[1]);
                         myAlert('To enable your profile, please fill out all the field or at least the required ones(username)',5000);
-                        myModal.show();
+                        newProfileUpdate.show();
                     }            
                 })
                 .catch((error) => {
@@ -70,7 +77,39 @@ window.addEventListener('load',()=>{
     });
 });
 
+clipboard.on('success', function(e) {
+    toast('link saved in clipboard',2000);
+    //e.clearSelection();
+});
 
+
+function toast(text,time){
+
+
+    let toastContainer = document.getElementById('toastContainer');
+
+    let toastHTML =
+    '<div class=\"toast align-items-center\" role=\"alert\" aria-live=\"assertive\" aria-atomic=\"true\">' +
+        '<div class=\"d-flex\">'+
+            '<div class=\"toast-body\">'+
+                text+
+            '</div>'+
+            '<button type=\"button\" class=\"btn-close me-2 m-auto\" data-bs-dismiss=\"toast\" aria-label=\"Close\"></button>'+
+        '</div>'+
+    '</div>';
+
+    toastContainer.innerHTML = toastHTML;
+    let timeTemp=1000;
+    if(time){
+        timeTemp = time;
+    }
+    let toast = new bootstrap.Toast(toastContainer.querySelector('.toast'),{animation:true,autohide:true,delay:time});
+    toast.show();
+
+    toastContainer.addEventListener('hidden.bs.toast',()=>{
+        toast.dispose();
+    });
+}
 function getImageURL(storage,id,element){
     var pathReference = storage.ref('userPhotos/'+id+'/profileImage.jpg');
     pathReference.getDownloadURL()
@@ -141,6 +180,12 @@ function loadUserInfo(obj){
                 }
             break;
         }
+    }
+    if(!id){
+        document.getElementById('copyLink').setAttribute('data-clipboard-text',window.location.href+'?id='+user().uid);
+    }
+    else{
+        document.getElementById('copyLink').setAttribute('data-clipboard-text',window.location.href);
     }
 }
 let query;
@@ -544,3 +589,90 @@ document.getElementById('desc').addEventListener('input',(e)=>{
     document.getElementById('charCounter').textContent = charCounter(e.target.value) + '/100';
 });
 
+document.getElementById('editImageContainer').addEventListener('mouseover',(event)=>{
+    let element = event.target;
+    element.querySelector('span').classList.toggle('d-none');
+    element.querySelector('span').classList.toggle('d-block');
+    element.style.backgroundColor = 'rgba(255,255,255,0.3)';
+});
+
+
+document.getElementById('editImageContainer').addEventListener('mouseout',(event)=>{
+    let element = event.target;
+    element.querySelector('span').classList.toggle('d-none');
+    element.querySelector('span').classList.toggle('d-block');
+    element.style.backgroundColor = '';
+});
+
+document.getElementById('editImageContainer').addEventListener('click',(event)=>{
+    let element = event.target;
+    let imageInput = element.parentElement.querySelector('input');
+    imageInput.click();
+});
+
+document.getElementById('profileImage').addEventListener('change',(event)=>{
+    let spinnerCont = document.createElement('div');
+    spinnerCont.classList.add('spinner-border');
+    spinnerCont.style.width = '75px';
+    spinnerCont.style.height = '75px';
+    spinnerCont.setAttribute('role','status');
+    let spinner = document.createElement('span');
+    spinner.classList.add('visually-hidden');
+    spinner.textContent = 'Loading...';
+    spinnerCont.appendChild(spinner);
+    let element = event.target;
+    element.previousElementSibling.insertBefore(spinnerCont,element.children[0]);
+    console.log(element.previousElementSibling);
+    let file = element.files[0];
+    let image = element.parentElement.querySelector('img');
+    resize(file,200,image);
+    image.onload = (el)=>{
+        console.log(el.target.src);
+        var uploadTask = storage.ref().child('userPhotos/'+user().uid+'/profileImage.jpg').putString(el.target.src,'data_url');
+
+        // Listen for state changes, errors, and completion of the upload.
+        uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+        (snapshot) => {
+            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            //console.log('Upload is ' + progress + '% done');
+            switch (snapshot.state) {
+            case firebase.storage.TaskState.PAUSED: // or 'paused'
+                console.log('Upload is paused');
+                break;
+            case firebase.storage.TaskState.RUNNING: // or 'running'
+                console.log('Upload is running',progress);
+                break;
+            }
+        }, 
+        (error) => {
+            console.log(error);
+            // A full list of error codes is available at
+            // https://firebase.google.com/docs/storage/web/handle-errors
+            switch (error.code) {
+            case 'storage/unauthorized':
+                // User doesn't have permission to access the object
+                break;
+            case 'storage/canceled':
+                // User canceled the upload
+                break;
+
+            // ...
+
+            case 'storage/unknown':
+                // Unknown error occurred, inspect error.serverResponse
+                break;
+            }
+        }, 
+        () => {
+            // Upload completed successfully, now we can get the download URL
+            uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                //loadImageProfileView(downloadURL);
+                //myAlert('Profile image saved succesfully');
+
+            });
+        }
+        );
+        spinnerCont.remove();
+    }
+});

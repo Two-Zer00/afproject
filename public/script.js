@@ -35,14 +35,15 @@ function createElement(id,obj){
     container.classList.add('row');
 
     let profileImageContaner = document.createElement('div');
-    profileImageContaner.classList.add('col-1','p-0');
-    profileImageContaner.style.width = '80px';
+    profileImageContaner.classList.add('col-auto','p-0');
     let imageContainer = document.createElement('div');
-    imageContainer.classList.add('rounded-circle','overflow-hidden','border','border-3','load','position-relative');
-    imageContainer.style.height = "80px";
+    imageContainer.classList.add('d-flex','justify-content-center','align-items-center');
     let profileImage = document.createElement('img');
-    profileImage.style.height = '100%';
-    profileImage.classList.add('bg-white');
+    profileImage.style.height = '80px';
+    profileImage.style.width = '80px';
+    profileImage.classList.add('bg-white', 'rounded-circle', 'border', 'border-3', 'mt-1' ,'mb-1');
+    profileImage.style.objectFit = 'cover';
+    profileImage.style.backgroundColor = 'rgba(206, 206, 206, 0.534)';
     getImagesURL(obj.userId,profileImage);
     imageContainer.appendChild(profileImage);
     profileImageContaner.appendChild(imageContainer);
