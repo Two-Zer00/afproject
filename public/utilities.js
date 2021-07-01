@@ -1,6 +1,8 @@
 var db = null; 
 var storage = null;
 var auth = null;
+let toastContainer = document.getElementById('toastContainer');
+
 window.addEventListener('load',()=>{
     db = firebase.firestore(); 
     storage = firebase.storage();
@@ -18,7 +20,7 @@ function user(){
     return user;
 }
 
-//fill the menu profile options and show depends on auth 
+//fill the menu profile options and show depends on Auth firebase object 
 function menuOptions(user){
     if(user){
         let navAction = document.querySelector('#dropdown');
@@ -59,12 +61,13 @@ function menuOptions(user){
 //Logout function, logout user.
 function logout(){
     firebase.auth().signOut().then(() => {
-
+        toast('Succesfully logged out',1000,'logged out');
     }).catch((error) => {
         // An error happened.
     });
 }
 
+//Menu dropdown animation icon, when dropdown shows, the icon changed to a fill version.
 var myDropdown = document.getElementById('myDropdown');
 myDropdown.addEventListener('show.bs.dropdown', function () {
     document.getElementById('dropdownMenuButton').classList.remove('bi-person');
@@ -85,16 +88,13 @@ document.getElementsByTagName('form')[0].addEventListener('submit',(event)=>{
         .then((userCredential) => {
             // Signed in
             var user = userCredential.user;
-            console.log(user);
+            toast('Welcome!',3000,'logged');
         })
         .catch((error) => {
             var errorCode = error.code;
             var errorMessage = error.message;
             console.log(error);
-            form.querySelector('#messages').textContent = errorMessage;
-            setTimeout(()=>{
-                form.querySelector('#messages').textContent = '';
-            },3000);
+            toast(error.message, 5000, 'logged out');
         });
     }
 });
@@ -115,7 +115,7 @@ function loginUsingGoogle(){
         var user = result.user;
         // ...
         console.warn(result.user);
-        //userLogged();
+        toast('Welcome!',3000,'logged');
     }).catch((error) => {
         // Handle Errors here.
         var errorCode = error.code;
@@ -124,6 +124,7 @@ function loginUsingGoogle(){
         var email = error.email;
         // The firebase.auth.AuthCredential type that was used.
         var credential = error.credential;
+        toast(error.message, 5000, 'logged out');
         console.error(error);
         // ...
     });
@@ -260,4 +261,46 @@ function clipboardShareLinkProfile(id){
       } catch (err) {
         console.log('Oops, unable to copy');
       }
+}
+
+function toast(text,time,type){
+    let toastType = 'bi bi-emoji-neutral';
+    switch (type) {
+        case 'clipboard':
+            toastType = 'bi bi-clipboard-check';
+            break;
+        case 'logged':
+            toastType = 'bi bi-person-check';
+            break;
+        case 'logged out':
+            toastType = 'bi bi-person-x';
+            break;
+        case 'img updated':
+        toastType = 'bi bi-person-square';
+        break;
+    }
+    
+    let toastHTML =
+    '<div class=\"toast align-items-center\" role=\"alert\" aria-live=\"assertive\" aria-atomic=\"true\">' +
+        '<div class=\"fs-6\">'+
+            '<div class=\"row\" style=\"height:60px;\">'+
+                '<div class=\"col-auto d-flex align-items-center bg-secondary '+toastType+' text-light rounded-start\">'+
+                '</div>'+
+                '<div class=\"col d-flex align-items-center\">'+
+                    text+
+                '</div>'+
+                '<div class=\"col-auto d-flex align-items-center border-start\">'+
+                    '<a class=\"me-2 text-decoration-none link-dark fw-bolder\" data-bs-dismiss=\"toast\" aria-label=\"Close\" href=\"javascript:void(0)\">Dismiss</a>'+
+                '</div>'+
+            '</div>'+
+        '</div>'+
+    '</div>';
+
+    toastContainer.innerHTML = toastHTML;
+    let timeTemp=1000;
+    if(time){
+        timeTemp = time;
+    }
+    let toast = new bootstrap.Toast(toastContainer.querySelector('.toast'),{animation:true,autohide:true,delay:timeTemp});
+    toast.show();
 }

@@ -70,40 +70,11 @@ window.addEventListener('load',()=>{
 });
 
 clipboard.on('success', function(e) {
-    toast('Link saved in clipboard!',2000);
+    toast('Link saved in clipboard!',2000,'clipboard');
     //e.clearSelection();
 });
 
 
-function toast(text,time){
-    let toastContainer = document.getElementById('toastContainer');
-    let toastHTML =
-    '<div class=\"toast align-items-center\" role=\"alert\" aria-live=\"assertive\" aria-atomic=\"true\">' +
-        '<div class=\"fs-6\">'+
-            '<div class=\"row\" style=\"height:60px;\">'+
-                '<div class=\"col-auto d-flex align-items-center bg-secondary bi bi-clipboard-check text-light rounded-start\">'+
-                '</div>'+
-                '<div class=\"col d-flex align-items-center\">'+
-                    text+
-                '</div>'+
-                '<div class=\"col-auto d-flex align-items-center border-start\">'+
-                    '<a class=\"me-2 text-decoration-none link-dark fw-bolder\" data-bs-dismiss=\"toast\" aria-label=\"Close\" href=\"javascript:void(0)\">Dismiss</a>'+
-                '</div>'+
-            '</div>'+
-        '</div>'+
-    '</div>';
-
-    toastContainer.innerHTML = toastHTML;
-    let timeTemp=1000;
-    if(time){
-        timeTemp = time;
-    }
-    let toast = new bootstrap.Toast(toastContainer.querySelector('.toast'),{animation:true,autohide:true,delay:time});
-    toast.show();
-    toastContainer.addEventListener('hidden.bs.toast',()=>{
-        toast.dispose();
-    });
-}
 function getImageURL(storage,id,element){
     var pathReference = storage.ref('userPhotos/'+id+'/profileImage.jpg');
     pathReference.getDownloadURL()
@@ -605,7 +576,7 @@ document.getElementById('editImageContainer').addEventListener('click',(event)=>
     imageInput.click();
 });
 
-document.getElementById('profileImage').addEventListener('change',(event)=>{
+document.getElementById('profileImageInput').addEventListener('change',(event)=>{
     let spinnerCont = document.createElement('div');
     spinnerCont.classList.add('spinner-border');
     spinnerCont.style.width = '75px';
@@ -663,12 +634,12 @@ document.getElementById('profileImage').addEventListener('change',(event)=>{
             // Upload completed successfully, now we can get the download URL
             uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
                 //loadImageProfileView(downloadURL);
-                //myAlert('Profile image saved succesfully');
+                toast('Profile image updated successfully',2000,'img updated');
+                spinnerCont.remove();
 
             });
         }
         );
-        spinnerCont.remove();
     }
 });
 
