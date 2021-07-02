@@ -25,6 +25,10 @@
         "destination": "/upload/index.html"
       },
       {
+        "source": "/post",
+        "destination": "/post.html"
+      },
+      {
         "source": "/login",
         "destination": "/login/index.html"
       }

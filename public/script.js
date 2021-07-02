@@ -29,7 +29,7 @@ window.addEventListener('load',()=>{
 function createElement(id,obj){
     let element = document.createElement('a');
     element.classList.add('list-group-item', 'list-group-item-action');
-    element.href = 'post/?postId=' + id;
+    element.href = 'post?id=' + id;
 
     let container = document.createElement('div');
     container.classList.add('row');

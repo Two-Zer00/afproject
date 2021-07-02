@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <!-- update the version number as needed -->
+    <script defer src="/__/firebase/8.3.1/firebase-app.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/8.3.1/firebase-auth.js"></script>
+    <script defer src="/__/firebase/8.3.1/firebase-database.js"></script>
+    <script defer src="/__/firebase/8.3.1/firebase-firestore.js"></script>
+    <script defer src="/__/firebase/8.3.1/firebase-storage.js"></script>
+    <!-- 
+      initialize the SDK after all desired features are loaded, set useEmulator to false
+      to avoid connecting the SDK to running emulators.
+    -->
+    <script defer src="/__/firebase/init.js"></script>
+</head>
+<body>
+    <div id="stickyMenu"></div>
+    <div class="container-lg bg-white pt-3 pb-3z" style="min-height: calc(100vh - 55px);">
+        <div class="row">
+            <div class="col-lg-4 pb-3">
+                <div class="sticky-top" style="top: 70px; z-index: 1010;">
+                    <div class="d-flex justify-content-center align-items-center rounded-top border border-1 position-relative" style="width: 100%; min-height: 200px; background-color: rgba(206, 206, 206, 0.534);" id="imageContainer">
+                        <img src="" alt="" style="height: 150px; min-width: 150px; max-width: 150px; object-fit: cover; background-color: rgba(206, 206, 206, 0.534);" id="profileImage" class="rounded-circle border border-3 mt-1 mb-1">
+                        <div style="height: 150px; width: 150px;" class="position-absolute rounded-circle d-flex justify-content-center align-items-center pe-none" id="editImageContainer">
+                            <span class="bi bi-camera-fill text-decoration-none link-light pe-none d-none" style="font-size: 37.5px;  text-shadow: 0 0 3px black; line-height: 25px;"></span>
+                        </div>
+                        <input type="file" class="d-none" id="profileImageInput" accept="image/*">
+                        <div class="position-absolute top-0 end-0 p-2">
+                            <div class="dropdown">
+                                <a class="bi bi-three-dots-vertical text-decoration-none link-dark" data-bs-auto-close="inside" id="shareDots" href="#" role="button" id="dropdownLink" data-bs-toggle="dropdown" aria-expanded="false" ></a>
+                                <ul class="dropdown-menu dropdown-menu-lg-end">
+                                    <li><a class="dropdown-item copyLink" href="javascript:void(0);" data-clipboard-text="Just because you can doesn't mean you should — clipboard.js" id="copyLink">Get profile's link</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="detailsContainer" class="border border-1 rounded-bottom border-top-0 text-center">
+                        <small id="creationTime">User from 31 Jan 2021</small>
+                        <p id="profileDetailsUsername" class="m-0 fw-bold fs-3 d-flex align-items-center justify-content-center">
+                            <label for="editBtn">u/</label>
+                            <a href="javascript:void()" class="disabled d-none bi bi-pencil-square link-dark fs-6" data-bs-toggle="modal" data-bs-target="#profileDetailsModal" id="editBtn" style="line-height: 100%;"></a>
+                        </p>
+                        <div id="profileMinDetails">
+                            <small id="profileDetailsGender" class="fst-italic"></small>
+                        </div>
+                        <div class="m-0 p-0 fw-light fs- text-break" id="profileDetailsDesc">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="d-block text-center" id="spinner">
+                    <div id="audioContainer" class="border rounded" style="min-height: 100%;">
+                        <h3 class="text-center m-1" id="title">Title</h3>
+                        <div class="d-block text-center" id="spinner">
+                            <div class="spinner-grow text-dark" role="status" style="width: 7rem; height: 7rem;">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                        <audio controls src="" id="audio" style="width: 100%;" class="ps-1 pe-1 invisible">
+                        </audio>
+                        <p class="font-monospace m-0" id="date"></p>
+                        <p class="text-center m-0 fw-light" id="description">description</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+    <script src="js/modules.js"></script>
+    <script src="js/color-thief.umd.js"></script>
+    <script src="utilities.js"></script>
+    <script src="js/post.js"></script>
+</body>
+</html>

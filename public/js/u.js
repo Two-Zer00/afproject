@@ -10,7 +10,6 @@ let postInUse = '';
 let postElementInUse;
 var userValidate;
 let clipboard = new ClipboardJS('.copyLink');
-const colorThief = new ColorThief();
 let image = document.getElementById('profileImage');
 
 window.addEventListener('load',()=>{
@@ -18,7 +17,7 @@ window.addEventListener('load',()=>{
     db = firebase.firestore(); 
     //console.log(userInfo);
     if(id){
-        getUserInfo(db,id);
+        getUserInfo(db,id,true);
         getImageURL(storage,id,image);
     }
     firebase.auth().onAuthStateChanged(function(user) {
@@ -73,86 +72,6 @@ clipboard.on('success', function(e) {
     toast('Link saved in clipboard!',2000,'clipboard');
     //e.clearSelection();
 });
-
-
-function getImageURL(storage,id,element){
-    var pathReference = storage.ref('userPhotos/'+id+'/profileImage.jpg');
-    pathReference.getDownloadURL()
-    .then((url) => {
-        element.src = url;
-        userInfo.profilePhoto = url;
-    })
-    .catch((error) => {
-        element.src = 'staticFiles/profileImageDefault.png';
-    });
-}
-function getUserInfo(db,id){
-    db.collection("user").doc(id).get().then((doc) => {
-        if (doc.exists) {
-            userInfo = doc.data();
-            userInfo.id = doc.id;
-            loadUserInfo(doc.data());
-            getUserPosts(id);
-            //return doc.data();
-        } else {
-            // doc.data() will be undefined in this case
-            console.log("No such document!");
-        }            
-    })
-    .catch((error) => {
-        console.log("Error getting documents: ", error);
-    });
-
-}
-function loadUserInfo(obj){
-    let details = document.getElementById('detailsContainer');
-    console.log(details.children);
-    for(let i=0;i<details.children.length;i++){
-        console.log(details.children[i]);
-        switch (details.children[i].id) {
-            case 'profileDetailsUsername':
-                details.children[i].getElementsByTagName('label')[0].textContent = obj.username || details.children[i].textContent ;
-                document.getElementsByTagName("title")[0].innerText=(obj.username || details.children[i].textContent) + "'s profile";
-            break;
-            case 'profileMinDetails':
-                if(obj.gender==0){
-                    (details.children[i]).querySelector('#profileDetailsGender').textContent = 'Female'; 
-                    
-                    (details.children[i]).querySelector('#profileDetailsGender').innerHTML += '&#9792;'; 
-                }
-                else if(obj.gender==1){
-                    (details.children[i]).querySelector('#profileDetailsGender').textContent = 'Male'; 
-                    
-                    (details.children[i]).querySelector('#profileDetailsGender').innerHTML += '&#9794;'; 
-                }
-                else{
-                    (details.children[i]).querySelector('#profileDetailsGender').textContent = 'No specify '; 
-                    (details.children[i]).querySelector('#profileDetailsGender').innerHTML += '&#9793;'; 
-                }
-            break;
-            case 'profileDetailsDesc':
-                details.children[i].textContent = (obj.desc).substr(0,100)||details.children[i].textContent + '...';;
-            break;
-            case 'creationTime':
-                
-                if(obj.creationTime){
-                    const date = new Date(obj.creationTime);
-                    const month = new Intl.DateTimeFormat(navigator.language || navigator.userLanguage, {month: 'long'}).format(date);
-                    (details.children[i]).textContent = 'User since '+ month + ' ' + date.getFullYear();
-                }
-                else{
-                    (details.children[i]).textContent = '';
-                }
-            break;
-        }
-    }
-    if(!id){
-        document.getElementById('copyLink').setAttribute('data-clipboard-text',window.location.href+'?id='+user().uid);
-    }
-    else{
-        document.getElementById('copyLink').setAttribute('data-clipboard-text',window.location.href);
-    }
-}
 let query;
 function getUserPosts(id){
     query = db.collection("post").
@@ -282,7 +201,7 @@ function createElement(id,object){
     let cardBodyActionsPlay = document.createElement('a');
     cardBodyActionsPlay.classList.add('link-dark','bi','bi-play-fill','p-1','fw-bold','fs-4','stretched-link');
     cardBodyActionsPlay.style.lineHeight = '80%';
-    cardBodyActionsPlay.href = '/post/?postId='+id;
+    cardBodyActionsPlay.href = '/post?id='+id;
 
     cardBodyActions.appendChild(cardBodyActionsPlay);
 
@@ -650,3 +569,4 @@ image.addEventListener('load', function() {
     console.log(pickTextColorBasedOnBgColorAdvanced(color,'#FFFFFF','#000000'));
     document.getElementById('shareDots').style.color = pickTextColorBasedOnBgColorAdvanced(color,'#fff','#000');
 });
+

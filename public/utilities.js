@@ -2,6 +2,10 @@ var db = null;
 var storage = null;
 var auth = null;
 let toastContainer = document.getElementById('toastContainer');
+const colorThief = new ColorThief();
+
+
+document.getElementById('stickyMenu').innerHTML = menuHTML;
 
 window.addEventListener('load',()=>{
     db = firebase.firestore(); 
@@ -303,4 +307,93 @@ function toast(text,time,type){
     }
     let toast = new bootstrap.Toast(toastContainer.querySelector('.toast'),{animation:true,autohide:true,delay:timeTemp});
     toast.show();
+}
+
+
+/* USER INFO FUNCTIONS */
+
+function getImageURL(storage,id,element){
+    console.info(id);
+    var pathReference = storage.ref('userPhotos/'+id+'/profileImage.jpg');
+    pathReference.getDownloadURL()
+    .then((url) => {
+        element.src = url;
+        //userInfo.profilePhoto = url;
+    })
+    .catch((error) => {
+        if (error.code === 'storage/object-not-found'){
+            element.src = 'staticFiles/profileImageDefault.png';
+        }
+        else{
+            console.error(error.message);
+        }
+        
+    });
+}
+function getUserInfo(db,id,profile){
+    db.collection("user").doc(id).get().then((doc) => {
+        if (doc.exists) {
+            userInfo = doc.data();
+            userInfo.id = doc.id;
+            loadUserInfo(doc.data());
+            if (profile) getUserPosts(id);
+            //return doc.data();
+        } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+        }            
+    })
+    .catch((error) => {
+        console.log("Error getting documents: ", error);
+    });
+
+}
+function loadUserInfo(obj){
+    let details = document.getElementById('detailsContainer');
+    console.log(details.children);
+    for(let i=0;i<details.children.length;i++){
+        //console.log(details.children[i]);
+        switch (details.children[i].id) {
+            case 'profileDetailsUsername':
+                details.children[i].getElementsByTagName('label')[0].textContent = obj.username || details.children[i].textContent ;
+                document.getElementsByTagName("title")[0].innerText=(obj.username || details.children[i].textContent) + "'s profile";
+            break;
+            case 'profileMinDetails':
+                if(obj.gender==0){
+                    (details.children[i]).querySelector('#profileDetailsGender').textContent = 'Female'; 
+                    
+                    (details.children[i]).querySelector('#profileDetailsGender').innerHTML += '&#9792;'; 
+                }
+                else if(obj.gender==1){
+                    (details.children[i]).querySelector('#profileDetailsGender').textContent = 'Male'; 
+                    
+                    (details.children[i]).querySelector('#profileDetailsGender').innerHTML += '&#9794;'; 
+                }
+                else{
+                    (details.children[i]).querySelector('#profileDetailsGender').textContent = 'No specify '; 
+                    (details.children[i]).querySelector('#profileDetailsGender').innerHTML += '&#9793;'; 
+                }
+            break;
+            case 'profileDetailsDesc':
+                details.children[i].textContent = (obj.desc).substr(0,100)||details.children[i].textContent + '...';;
+            break;
+            case 'creationTime':
+                
+                if(obj.creationTime){
+                    const date = new Date(obj.creationTime);
+                    const month = new Intl.DateTimeFormat(navigator.language || navigator.userLanguage, {month: 'long'}).format(date);
+                    (details.children[i]).textContent = 'User since '+ month + ' ' + date.getFullYear();
+                }
+                else{
+                    (details.children[i]).textContent = '';
+                }
+            break;
+        }
+    }
+    if(!id){
+        document.getElementById('copyLink').setAttribute('data-clipboard-text',window.location.href+'?id='+user().uid);
+    }
+    else{
+        document.getElementById('copyLink').setAttribute('data-clipboard-text',window.location.href);
+    }
 }
