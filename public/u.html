@@ -42,9 +42,9 @@
                         </div>
                     </div>
                     <div id="detailsContainer" class="border border-1 rounded-bottom border-top-0 text-center">
-                        <small id="creationTime">User from 31 Jan 2021</small>
+                        <small id="creationTime">User from Jan 2021</small>
                         <p id="profileDetailsUsername" class="m-0 fw-bold fs-3 d-flex align-items-center justify-content-center">
-                            <label for="editBtn">u/</label>
+                            <a class="text-decoration-none link-dark" href="#">/u</a>
                             <a href="javascript:void()" class="disabled d-none bi bi-pencil-square link-dark fs-6" data-bs-toggle="modal" data-bs-target="#profileDetailsModal" id="editBtn" style="line-height: 100%;"></a>
                         </p>
                         <div id="profileMinDetails">
@@ -172,10 +172,12 @@
         </div>
     </div>
 
+    <div id="uploadModalContainer"></div>
+
     <div class="toast-container fixed-bottom start-50 translate-middle-x" style="bottom: 10px;" id="toastContainer">
 
     </div>
-    
+    <div id="floatButton"></div>
     <script src="js/modules.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
     <script src="js/color-thief.umd.js"></script>

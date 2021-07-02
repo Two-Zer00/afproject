@@ -21,7 +21,8 @@ window.addEventListener('load',()=>{
             db.collection("user").doc(doc.data().userId)
                 .get()
                 .then((user) => {
-
+                    userInfo = doc.data();
+                    userInfo.id = doc.data().userId;
                     loadUserInfo(user.data());
                     getImageURL(storage,user.id,image);
                     

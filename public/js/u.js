@@ -1,6 +1,5 @@
 let searchParams = new URLSearchParams(window.location.search);
 let id = searchParams.get("id");
-let userInfo = {};
 let newUser = false;
 let post={};
 let profileUpdateFormModal = new bootstrap.Modal(document.getElementById('profileDetailsModal'));
@@ -39,6 +38,7 @@ window.addEventListener('load',()=>{
                 .then((doc) => {
                     if (doc.exists) {
                         userInfo = doc.data();
+                        userInfo.id = user.uid;
                         loadUserInfo(doc.data());
                         getUserPosts(user.uid);
                         getImageURL(storage,user.uid,image);
@@ -70,7 +70,6 @@ window.addEventListener('load',()=>{
 
 clipboard.on('success', function(e) {
     toast('Link saved in clipboard!',2000,'clipboard');
-    //e.clearSelection();
 });
 let query;
 function getUserPosts(id){
@@ -127,31 +126,39 @@ function createElement(id,object){
     cardBodyContent.textContent = object.desc;
     cardBodyContent.id="bodyContent";
 
-
+    let dropdown = document.createElement('div');
+    dropdown.classList.add('dropdown','p-3','position-absolute','top-0','end-0');
+    dropdown.style.zIndex = '5';
+    dropdown.style.transform = 'rotate(0)';
+    let dropdownBtn = document.createElement('a');
+    dropdownBtn.id = 'dropdownButton';
+    dropdownBtn.classList.add('link-dark','bi','bi-three-dots-vertical','streched-link');
+    dropdownBtn.setAttribute('data-bs-toggle','dropdown');
+    dropdownBtn.setAttribute('aria-expanded','false');
+    let dropdownList = document.createElement('ul');
+    dropdownList.classList.add('dropdown-menu','dropdown-menu-end');
+    dropdownList.setAttribute('aria-labelledby',dropdownBtn.id);
+    
+    dropdown.appendChild(dropdownBtn);
+    let dropdownListElement = document.createElement('li');
+    let dropdownListElementLink = document.createElement('a');
+    dropdownListElementLink.classList.add('dropdown-item','bi','bi-share','link-secondary','copyLink');
+    dropdownListElementLink.style.lineHeight = '100%';
+    dropdownListElementLink.href = 'javascript:void(0)';
+    dropdownListElementLink.textContent = ' Share';
+    dropdownListElementLink.setAttribute('data-clipboard-text',(window.location.href).substr(0,(window.location.href.lastIndexOf('/')+1))+'post?id='+id);
+    
+    dropdownListElement.appendChild(dropdownListElementLink);
+    dropdownList.appendChild(dropdownListElement);
     if(userValidate){
-        let cardHeaderOptions = document.createElement('div');
-        cardHeaderOptions.classList.add('d-inline-block','text-end');
-        cardHeaderOptions.style.width = '10%';
-        let dropdown = document.createElement('div');
-        dropdown.classList.add('dropdown','p-3','position-absolute','top-0','end-0');
-        dropdown.style.zIndex = '5';
-        dropdown.style.transform = 'rotate(0)';
-        let dropdownBtn = document.createElement('a');
-        dropdownBtn.id = 'dropdownButton';
-        dropdownBtn.classList.add('link-dark','bi','bi-three-dots-vertical','streched-link');
-        dropdownBtn.setAttribute('data-bs-toggle','dropdown');
-        dropdownBtn.setAttribute('aria-expanded','false');
-        let dropdownList = document.createElement('ul');
-        dropdownList.classList.add('dropdown-menu');
-        dropdownList.setAttribute('aria-labelledby',dropdownBtn.id);
-        
-        dropdown.appendChild(dropdownBtn);
-
-        let dropdownListElement = document.createElement('li');
-        let dropdownListElementLink = document.createElement('a');
+        dropdownListElement = document.createElement('li');
+        dropdownListElementLink = document.createElement('a');
+         
         dropdownListElementLink.classList.add('dropdown-item','bi','bi-pencil-square','link-secondary');
+        
+        dropdownListElementLink.style.lineHeight = '100%';
         dropdownListElementLink.href = 'javascript:void(0)';
-        dropdownListElementLink.textContent = 'update';
+        dropdownListElementLink.textContent = ' Update';
         dropdownListElementLink.setAttribute('onclick','optionsPost("'+id+'",this)');
         
         dropdownListElement.appendChild(dropdownListElementLink);
@@ -160,19 +167,22 @@ function createElement(id,object){
         dropdownListElement = document.createElement('li');
         dropdownListElementLink = document.createElement('a');
         dropdownListElementLink.classList.add('dropdown-item','bi','bi-trash-fill','link-danger');
+        dropdownListElementLink.style.lineHeight = '100%';
         dropdownListElementLink.href = 'javascript:void(0)';
-        dropdownListElementLink.textContent = 'delete';
+        dropdownListElementLink.textContent = ' Delete';
         dropdownListElementLink.setAttribute('onclick','optionsPost("'+id+'",this,'+object.date+')');
         
         dropdownListElement.appendChild(dropdownListElementLink);
         dropdownList.appendChild(dropdownListElement);
         
 
-        dropdown.appendChild(dropdownList);
+        //dropdown.appendChild(dropdownList);
         //cardHeaderOptions.appendChild(dropdown);
         //cardHeader.appendChild(cardHeaderOptions);
-        cardElement.appendChild(dropdown);
+        
     }
+    dropdown.appendChild(dropdownList);
+    cardElement.appendChild(dropdown);
 
     let cardBodyContent1 = document.createElement('p');
     let cardBodyContentFileName = document.createElement('small');

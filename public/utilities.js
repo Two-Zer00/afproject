@@ -3,9 +3,11 @@ var storage = null;
 var auth = null;
 let toastContainer = document.getElementById('toastContainer');
 const colorThief = new ColorThief();
-
-
+let userInfo = {};
+let uploadBtn;
 document.getElementById('stickyMenu').innerHTML = menuHTML;
+document.getElementById('stickyMenu').classList.add('sticky-top');
+
 
 window.addEventListener('load',()=>{
     db = firebase.firestore(); 
@@ -13,6 +15,15 @@ window.addEventListener('load',()=>{
     auth = firebase.auth();
     auth.onAuthStateChanged((user)=>{
         menuOptions(user);
+        if(user){
+            document.getElementById('uploadModalContainer').innerHTML = uploadHTML;
+            uploadBtn = document.getElementById('uploadButton');
+            document.getElementById('floatButton').classList.add('fixed-bottom');
+            document.getElementById('floatButton').style.bottom = '10px';
+            document.getElementById('floatButton').style.right = '10px';
+            document.getElementById('floatButton').style.left = 'unset';
+            document.getElementById('floatButton').innerHTML = uploadFloatButton;
+        }
     });
 });
 
@@ -36,9 +47,12 @@ function menuOptions(user){
         profileElement.textContent = 'My profile';
         profileElement.classList.add('dropdown-item');
         let uploadElement = document.createElement('a');
-        uploadElement.href = '/upload';
+        //data-bs-toggle="modal" data-bs-target="#profileDetailsModal"
+        uploadElement.setAttribute('data-bs-toggle','modal');
+        uploadElement.setAttribute('data-bs-target','#uploadModal');
+        uploadElement.href = 'javascript:void(0)';
         uploadElement.textContent = 'Upload';
-        uploadElement.classList.add('dropdown-item');
+        uploadElement.classList.add('dropdown-item','d-none','d-sm-none','d-md-none','d-lg-block','d-xl-block');
 
         let signOutElement = document.createElement('a');
         signOutElement.classList.add('dropdown-item');
@@ -137,7 +151,7 @@ function loginUsingGoogle(){
 
 /* GENERAL UTILITIES */
 
-//Gives the difference between the current date and the date in the post, if the difference is more than a month just show the date.
+//Gives the difference in seconds, minutes, hours and days between the current date and the given date, if the difference is more than a month just show the date.
 function daysAgo(date){
     var difference = Date.now() - date;
 
@@ -318,7 +332,6 @@ function getImageURL(storage,id,element){
     pathReference.getDownloadURL()
     .then((url) => {
         element.src = url;
-        //userInfo.profilePhoto = url;
     })
     .catch((error) => {
         if (error.code === 'storage/object-not-found'){
@@ -333,8 +346,7 @@ function getImageURL(storage,id,element){
 function getUserInfo(db,id,profile){
     db.collection("user").doc(id).get().then((doc) => {
         if (doc.exists) {
-            userInfo = doc.data();
-            userInfo.id = doc.id;
+            console.warn(userInfo);
             loadUserInfo(doc.data());
             if (profile) getUserPosts(id);
             //return doc.data();
@@ -355,7 +367,8 @@ function loadUserInfo(obj){
         //console.log(details.children[i]);
         switch (details.children[i].id) {
             case 'profileDetailsUsername':
-                details.children[i].getElementsByTagName('label')[0].textContent = obj.username || details.children[i].textContent ;
+                details.children[i].getElementsByTagName('a')[0].textContent = obj.username || details.children[i].textContent ;
+                details.children[i].getElementsByTagName('a')[0].href = 'u?id='+userInfo.id;
                 document.getElementsByTagName("title")[0].innerText=(obj.username || details.children[i].textContent) + "'s profile";
             break;
             case 'profileMinDetails':
@@ -395,5 +408,94 @@ function loadUserInfo(obj){
     }
     else{
         document.getElementById('copyLink').setAttribute('data-clipboard-text',window.location.href);
+    }
+}
+
+/* UPLOAD FUNCTIONS */
+function uploadFiles(file,date){
+    
+    // Upload file and metadata to the object 'images/mountains.jpg'
+    var uploadTask = storage.ref().child('audio/'+user().uid+'/'+date+'/'+file.name).put(file);
+    document.querySelector('#progressBar').style.display = 'flex';
+    document.querySelector('#uploadFile').style.display = 'none';
+    document.querySelector('#uploadButton').classList.add('disabled');
+    document.querySelector('#uploading').textContent = 'Uploading the file, please wait';
+    // Listen for state changes, errors, and completion of the upload.
+    uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+    function(snapshot) {
+    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+    var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+    //console.log('Upload is ' + progress + '% done');
+    changeProgressBar(progress);
+    //document.getElementById("progressBar").setAttribute("data-value",progress);
+    switch (snapshot.state) {
+        case firebase.storage.TaskState.PAUSED: // or 'paused'
+            console.log('Upload is paused');
+        break;
+        case firebase.storage.TaskState.RUNNING: // or 'running'
+            console.log('Upload is running');
+        break;
+        }
+    }, function(error) {
+        // A full list of error codes is available at
+        // https://firebase.google.com/docs/storage/web/handle-errors
+        switch (error.code) {
+            case 'storage/unauthorized':
+            // User doesn't have permission to access the object
+            break;
+
+            case 'storage/canceled':
+            // User canceled the upload
+            break;
+
+            case 'storage/unknown':
+            // Unknown error occurred, inspect error.serverResponse
+            break;
+            }
+    }, function() {
+        // Upload completed successfully, now we can get the download URL
+        uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+            obj.fileURL = downloadURL;
+            obj.userId = user().uid;
+            obj.date = date;
+            obj.fileName = file.name;
+            db.collection("post").add(obj)
+            .then((docRef) => {
+                //console.log("Document written with ID: ", docRef.id);
+                document.querySelector('#progressBar').children[0].classList.toggle('bg-success');
+                document.querySelector('#menuAction').style.display = 'block';
+                document.querySelector('#toAudio').href = '/post?id='+docRef.id;
+            })
+            .catch((error) => {
+                console.error("Error adding document: ", error);
+            });
+        });
+    });
+}
+function cleanView(){
+    document.querySelector('#uploading').textContent = 'Upload your audio';
+    document.querySelector('#progressBar').children[0].classList.toggle('bg-success');
+    document.querySelector('#progressBar').style.display = 'none';
+    document.querySelector('#menuAction').style.display = 'none';
+    document.querySelector('#uploadFile').style.display = 'block';
+    
+    document.querySelector('#uploadButton').classList.remove('disabled');
+    //document.querySelector('#uploadButton').disabled = true;
+    //document.querySelector('#uploadButton').childNodes[0].style.display = 'none';
+    document.querySelector('#uploadFile').reset();
+
+}
+function changeProgressBar(progress){
+    let bar = document.querySelector('#progressBar').children[0];
+    bar.style.width = progress + "%";
+    bar.setAttribute('aria-valuenow',progress);
+    bar.textContent = Math.floor(progress)  + "%";
+}
+function loadUpload(){
+    let form = document.getElementById('uploadFile');
+    obj={"title":form.title.value,"desc":form.desc.value,"nsfw":form.nsfw.checked};
+    let file = form.file.files[0];
+    if(form.checkValidity() && (file.type).includes('audio')){
+        uploadFiles(file,Date.now());
     }
 }
