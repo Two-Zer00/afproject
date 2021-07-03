@@ -24,6 +24,9 @@ window.addEventListener('load',()=>{
             document.getElementById('floatButton').style.left = 'unset';
             document.getElementById('floatButton').innerHTML = uploadFloatButton;
         }
+        else{
+            document.getElementById('floatButton').children[0].remove();
+        }
     });
 });
 
