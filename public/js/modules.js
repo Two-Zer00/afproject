@@ -52,7 +52,7 @@ const uploadHTML =
                     '<div class="row g-3">' +
                         '<div class="col-md">' +
                             '<div class="input-group mb-3">' +
-                                '<input type="file" name="file" class="form-control" id="inputGroupFile02" accept="audio/*" required>' +
+                                '<input type="file" name="file" class="form-control" id="inputGroupFile02" accept="audio/*" required onchange="checkSize(this)">' +
                             '</div>' +
                         '</div>' +
                         '<div class="col-md">' +

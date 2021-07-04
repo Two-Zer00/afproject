@@ -277,7 +277,7 @@ function optionsPost(id,element,date){
     '<p>Are you sure you want delete this post?</p>' ;
 
     let optionsModal = document.getElementById('postOptions');
-    switch (element.textContent) {
+    switch (((element.textContent).trim().toLowerCase())) {
         case 'update':
             console.log(id,element);
             optionsModal.querySelector('#modalTitle').textContent = 'Update post';
@@ -301,7 +301,6 @@ function optionsPost(id,element,date){
             postElementInUse = (element.parentElement.parentElement.parentElement.parentElement).children[1];
             document.getElementById('sendButton').setAttribute('onclick','deletePost(\"'+id+'\",\"'+date+'\",\"'+postElementInUse.children.fileName.textContent+'\")');
             postUpdateFormModal.show();
-            //loadDeleteForm(id,element,date,postElementInUse.children.fileName);
         break;
     }
 }
@@ -347,7 +346,6 @@ function uploadPost(){
     form.style.display = 'none';
 
     let formLength = form.querySelectorAll('#bodyContent,#headerText,#bodyTitle').length;
-    //console.log(postElementInUse.children);
     db.collection("post").doc(postInUse).update({
         desc: form.desc.value,
         nsfw: form.nsfw.checked,
@@ -468,7 +466,7 @@ document.getElementById('saveProfileBtn').addEventListener('click',()=>{ //Profi
     }
 });
 
-window.addEventListener('scroll',()=>{
+window.addEventListener('scroll',()=>{ //Load next post once you finish scroll
     var d = document.documentElement;
     var offset = d.scrollTop + window.innerHeight;
     var height = d.offsetHeight;
@@ -490,7 +488,6 @@ document.getElementById('editImageContainer').addEventListener('mouseover',(even
     element.querySelector('span').classList.toggle('d-block');
     element.style.backgroundColor = 'rgba(255,255,255,0.3)';
 });
-
 
 document.getElementById('editImageContainer').addEventListener('mouseout',(event)=>{
     let element = event.target;
@@ -516,6 +513,7 @@ document.getElementById('profileImageInput').addEventListener('change',(event)=>
     spinner.textContent = 'Loading...';
     spinnerCont.appendChild(spinner);
     let element = event.target;
+    element.classList.add('pe-none');
     element.previousElementSibling.insertBefore(spinnerCont,element.children[0]);
     console.log(element.previousElementSibling);
     let file = element.files[0];
@@ -564,6 +562,7 @@ document.getElementById('profileImageInput').addEventListener('change',(event)=>
             uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
                 //loadImageProfileView(downloadURL);
                 toast('Profile image updated successfully',2000,'img updated');
+                element.classList.remove('pe-none');
                 spinnerCont.remove();
 
             });

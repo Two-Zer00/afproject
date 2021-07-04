@@ -297,12 +297,14 @@ function toast(text,time,type){
             toastType = 'bi bi-person-x';
             break;
         case 'img updated':
-        toastType = 'bi bi-person-square';
-        break;
+            toastType = 'bi bi-person-square';
+            break;
+        case 'upload failed':
+            toastType = 'bi bi-cloud-arrow-up';
+            break;
     }
-    
     let toastHTML =
-    '<div class=\"toast align-items-center\" role=\"alert\" aria-live=\"assertive\" aria-atomic=\"true\">' +
+    '<div class=\"toast align-items-center\" role=\"alert\" aria-live=\"assertive\" aria-atomic=\"true\" >' +
         '<div class=\"fs-6\">'+
             '<div class=\"row\" style=\"height:60px;\">'+
                 '<div class=\"col-auto d-flex align-items-center bg-secondary '+toastType+' text-light rounded-start\">'+
@@ -318,11 +320,8 @@ function toast(text,time,type){
     '</div>';
 
     toastContainer.innerHTML = toastHTML;
-    let timeTemp=1000;
-    if(time){
-        timeTemp = time;
-    }
-    let toast = new bootstrap.Toast(toastContainer.querySelector('.toast'),{animation:true,autohide:true,delay:timeTemp});
+    toastContainer.style.zIndex = '1050';
+    let toast = new bootstrap.Toast(toastContainer.querySelector('.toast'),{animation:true,autohide:true,delay:time||1000});
     toast.show();
 }
 
@@ -416,7 +415,6 @@ function loadUserInfo(obj){
 
 /* UPLOAD FUNCTIONS */
 function uploadFiles(file,date){
-    
     // Upload file and metadata to the object 'images/mountains.jpg'
     var uploadTask = storage.ref().child('audio/'+user().uid+'/'+date+'/'+file.name).put(file);
     document.querySelector('#progressBar').style.display = 'flex';
@@ -426,35 +424,22 @@ function uploadFiles(file,date){
     // Listen for state changes, errors, and completion of the upload.
     uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
     function(snapshot) {
-    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-    var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-    //console.log('Upload is ' + progress + '% done');
-    changeProgressBar(progress);
-    //document.getElementById("progressBar").setAttribute("data-value",progress);
-    switch (snapshot.state) {
-        case firebase.storage.TaskState.PAUSED: // or 'paused'
-            console.log('Upload is paused');
-        break;
-        case firebase.storage.TaskState.RUNNING: // or 'running'
-            console.log('Upload is running');
-        break;
-        }
-    }, function(error) {
-        // A full list of error codes is available at
-        // https://firebase.google.com/docs/storage/web/handle-errors
-        switch (error.code) {
-            case 'storage/unauthorized':
-            // User doesn't have permission to access the object
+        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        //console.log('Upload is ' + progress + '% done');
+        changeProgressBar(progress);
+        //document.getElementById("progressBar").setAttribute("data-value",progress);
+        switch (snapshot.state) {
+            case firebase.storage.TaskState.PAUSED: // or 'paused'
+                console.log('Upload is paused');
             break;
-
-            case 'storage/canceled':
-            // User canceled the upload
-            break;
-
-            case 'storage/unknown':
-            // Unknown error occurred, inspect error.serverResponse
+            case firebase.storage.TaskState.RUNNING: // or 'running'
+                console.log('Upload is running');
             break;
             }
+    }, function(error) {
+        cleanView();
+        toast(error.message,2000,'upload failed');
     }, function() {
         // Upload completed successfully, now we can get the download URL
         uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
@@ -464,10 +449,13 @@ function uploadFiles(file,date){
             obj.fileName = file.name;
             db.collection("post").add(obj)
             .then((docRef) => {
-                //console.log("Document written with ID: ", docRef.id);
+                console.log("Document written with ID: ", docRef);
                 document.querySelector('#progressBar').children[0].classList.toggle('bg-success');
                 document.querySelector('#menuAction').style.display = 'block';
                 document.querySelector('#toAudio').href = '/post?id='+docRef.id;
+                if((window.location.href).indexOf('u')!=-1){
+                    createElement(docRef.id,obj);
+                }
             })
             .catch((error) => {
                 console.error("Error adding document: ", error);
@@ -498,7 +486,13 @@ function loadUpload(){
     let form = document.getElementById('uploadFile');
     obj={"title":form.title.value,"desc":form.desc.value,"nsfw":form.nsfw.checked};
     let file = form.file.files[0];
-    if(form.checkValidity() && (file.type).includes('audio')){
+    if(form.reportValidity() && (file.type).includes('audio') && ((file.size/1024)/1024)<=60){
         uploadFiles(file,Date.now());
+    }
+}
+function checkSize(element){
+    let file = element.files[0];
+    if(((file.size/1024)/1024)>60){
+        element.setCustomValidity('File size exceeds 60MB');
     }
 }
