@@ -287,12 +287,14 @@ function toast(text,time,type){
             toastType = 'bi bi-person-x';
             break;
         case 'img updated':
-        toastType = 'bi bi-person-square';
-        break;
+            toastType = 'bi bi-person-square';
+            break;
+        case 'upload failed':
+            toastType = 'bi bi-cloud-arrow-up';
+            break;
     }
-    
     let toastHTML =
-    '<div class=\"toast align-items-center\" role=\"alert\" aria-live=\"assertive\" aria-atomic=\"true\">' +
+    '<div class=\"toast align-items-center\" role=\"alert\" aria-live=\"assertive\" aria-atomic=\"true\" >' +
         '<div class=\"fs-6\">'+
             '<div class=\"row\" style=\"height:60px;\">'+
                 '<div class=\"col-auto d-flex align-items-center bg-secondary '+toastType+' text-light rounded-start\">'+
@@ -308,11 +310,8 @@ function toast(text,time,type){
     '</div>';
 
     toastContainer.innerHTML = toastHTML;
-    let timeTemp=1000;
-    if(time){
-        timeTemp = time;
-    }
-    let toast = new bootstrap.Toast(toastContainer.querySelector('.toast'),{animation:true,autohide:true,delay:timeTemp});
+    toastContainer.style.zIndex = '1050';
+    let toast = new bootstrap.Toast(toastContainer.querySelector('.toast'),{animation:true,autohide:true,delay:time||1000});
     toast.show();
 }
 
@@ -445,15 +444,13 @@ function uploadFiles(file,date){
             case 'storage/unauthorized':
             // User doesn't have permission to access the object
             break;
-
-            case 'storage/canceled':
-            // User canceled the upload
-            break;
-
-            case 'storage/unknown':
-            // Unknown error occurred, inspect error.serverResponse
+            case firebase.storage.TaskState.RUNNING: // or 'running'
+                console.log('Upload is running');
             break;
             }
+    }, function(error) {
+        cleanView();
+        toast(error.message,2000,'upload failed');
     }, function() {
         // Upload completed successfully, now we can get the download URL
         uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
@@ -467,6 +464,9 @@ function uploadFiles(file,date){
                 document.querySelector('#progressBar').children[0].classList.toggle('bg-success',true);
                 document.querySelector('#menuAction').style.display = 'block';
                 document.querySelector('#toAudio').href = '/post?id='+docRef.id;
+                if((window.location.href).indexOf('u')!=-1){
+                    createElement(docRef.id,obj);
+                }
             })
             .catch((error) => {
                 console.error("Error adding document: ", error);
@@ -497,7 +497,13 @@ function loadUpload(){
     let form = document.getElementById('uploadFile');
     obj={"title":form.title.value,"desc":form.desc.value,"nsfw":form.nsfw.checked};
     let file = form.file.files[0];
-    if(form.checkValidity() && (file.type).includes('audio')){
+    if(form.reportValidity() && (file.type).includes('audio') && ((file.size/1024)/1024)<=60){
         uploadFiles(file,Date.now());
+    }
+}
+function checkSize(element){
+    let file = element.files[0];
+    if(((file.size/1024)/1024)>60){
+        element.setCustomValidity('File size exceeds 60MB');
     }
 }
