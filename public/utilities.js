@@ -1,6 +1,8 @@
 var db = null; 
 var storage = null;
 var auth = null;
+let uploadTask;
+let uploadModal = document.createElement('div');
 let toastContainer = document.getElementById('toastContainer');
 const colorThief = new ColorThief();
 let userInfo = {};
@@ -9,13 +11,16 @@ document.getElementById('stickyMenu').innerHTML = menuHTML;
 document.getElementById('stickyMenu').classList.add('sticky-top');
 
 
+
 window.addEventListener('load',()=>{
+    
     db = firebase.firestore(); 
     storage = firebase.storage();
     auth = firebase.auth();
     auth.onAuthStateChanged((user)=>{
         menuOptions(user);
         if(user){
+            console.warn('logged in');
             document.getElementById('uploadModalContainer').innerHTML = uploadHTML;
             uploadBtn = document.getElementById('uploadButton');
             document.getElementById('floatButton').classList.add('fixed-bottom');
@@ -25,10 +30,18 @@ window.addEventListener('load',()=>{
             document.getElementById('floatButton').innerHTML = uploadFloatButton;
         }
         else{
-            document.getElementById('floatButton').children[0].remove();
+            console.warn('logged out');
+            if(document.getElementById('floatButton').children[0]){
+                document.getElementById('floatButton').children[0].remove();
+            }
         }
+        uploadModal = document.getElementById('uploadModal');
+        
     });
 });
+
+
+
 
 /*MENU UTILITIES */
 
@@ -40,42 +53,16 @@ function user(){
 
 //fill the menu profile options and show depends on Auth firebase object 
 function menuOptions(user){
+    let navAction = document.querySelector('#dropdown');
     if(user){
-        let navAction = document.querySelector('#dropdown');
-        for(const item of navAction.children){
-            item.style.display = 'none';
-        }
-        let profileElement = document.createElement('a');
-        profileElement.href = '/u';
-        profileElement.textContent = 'My profile';
-        profileElement.classList.add('dropdown-item');
-        let uploadElement = document.createElement('a');
-        //data-bs-toggle="modal" data-bs-target="#profileDetailsModal"
-        uploadElement.setAttribute('data-bs-toggle','modal');
-        uploadElement.setAttribute('data-bs-target','#uploadModal');
-        uploadElement.href = 'javascript:void(0)';
-        uploadElement.textContent = 'Upload';
-        uploadElement.classList.add('dropdown-item','d-none','d-sm-none','d-md-none','d-lg-block','d-xl-block');
-
-        let signOutElement = document.createElement('a');
-        signOutElement.classList.add('dropdown-item');
-        signOutElement.href = "javascript:void(0)";
-        signOutElement.textContent = 'Sign Out';
-        signOutElement.setAttribute('onclick','logout()');
-        navAction.appendChild(profileElement);
-        navAction.appendChild(uploadElement);
-        navAction.appendChild(signOutElement);
+        navAction.children.formLogin.remove();
+        navAction.innerHTML = menuActions;
     }
     else{
-        let navAction = document.querySelector('#dropdown');
-        for(const item of navAction.children){
-            if(item != navAction.querySelector('#loginForm') || item != navAction.querySelector('#signUp') || item != navAction.querySelector('.dropdown-divider')){
-                item.style.display = 'none';
-            }
-        }
-        navAction.querySelector('#loginForm').style.display = 'block';
-        navAction.querySelector('#signUp').style.display = 'block';
-        navAction.querySelector('.dropdown-divider').style.display = 'block';
+       if( navAction.children.menuActions){
+           navAction.children.menuActions.remove();
+       }
+        navAction.innerHTML = loginForm;
     }
 }
 
@@ -100,11 +87,11 @@ myDropdown.addEventListener('hide.bs.dropdown', function () {
 });
 
 //Login using email and password
-document.getElementsByTagName('form')[0].addEventListener('submit',(event)=>{
+function signIn(event){
     event.preventDefault();
-    const form = event.target;
-    //console.log(form);
-    if((event.target).checkValidity()){
+    const form = event.target.parentElement; //form
+    console.log(form);
+    if((form).checkValidity()){
         auth.signInWithEmailAndPassword(form.email.value, form.password.value)
         .then((userCredential) => {
             // Signed in
@@ -118,7 +105,10 @@ document.getElementsByTagName('form')[0].addEventListener('submit',(event)=>{
             toast(error.message, 5000, 'logged out');
         });
     }
-});
+    else{
+        form.reportValidity()
+    }
+}
 //Login using google
 function loginUsingGoogle(){
     var provider = new firebase.auth.GoogleAuthProvider();
@@ -414,11 +404,17 @@ function loadUserInfo(obj){
     }
 }
 
-/* UPLOAD FUNCTIONS */
 function uploadFiles(file,date){
-    
     // Upload file and metadata to the object 'images/mountains.jpg'
-    var uploadTask = storage.ref().child('audio/'+user().uid+'/'+date+'/'+file.name).put(file);
+    uploadTask = storage.ref().child('audio/'+user().uid+'/'+date+'/'+file.name).put(file);
+    /* UPLOAD FUNCTIONS */
+    uploadModal.addEventListener('hide.bs.modal',()=>{
+        console.log('Cancel upload');
+        uploadTask.cancel();
+    });
+    uploadModal.addEventListener('hidden.bs.modal',()=>{
+        cleanView();
+    });
     document.querySelector('#progressBar').style.display = 'flex';
     document.querySelector('#uploadFile').style.display = 'none';
     document.querySelector('#uploadButton').classList.add('disabled');
@@ -426,19 +422,22 @@ function uploadFiles(file,date){
     // Listen for state changes, errors, and completion of the upload.
     uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
     function(snapshot) {
-    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-    var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-    //console.log('Upload is ' + progress + '% done');
-    changeProgressBar(progress);
-    //document.getElementById("progressBar").setAttribute("data-value",progress);
-    switch (snapshot.state) {
-        case firebase.storage.TaskState.PAUSED: // or 'paused'
-            console.log('Upload is paused');
-        break;
-        case firebase.storage.TaskState.RUNNING: // or 'running'
-            console.log('Upload is running');
-        break;
-        }
+        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        //console.log('Upload is ' + progress + '% done');
+        changeProgressBar(progress);
+        //document.getElementById("progressBar").setAttribute("data-value",progress);
+        switch (snapshot.state) {
+            case firebase.storage.TaskState.PAUSED: // or 'paused'
+                console.log('Upload is paused');
+            break;
+            case firebase.storage.TaskState.RUNNING: // or 'running'
+                console.log('Upload is running');
+            break;
+            case firebase.storage.TaskState.CANCELED: // or 'running'
+                console.log('Upload is canceled');
+            break;
+            }
     }, function(error) {
         // A full list of error codes is available at
         // https://firebase.google.com/docs/storage/web/handle-errors
@@ -465,7 +464,7 @@ function uploadFiles(file,date){
             db.collection("post").add(obj)
             .then((docRef) => {
                 //console.log("Document written with ID: ", docRef.id);
-                document.querySelector('#progressBar').children[0].classList.toggle('bg-success');
+                document.querySelector('#progressBar').children[0].classList.toggle('bg-success',true);
                 document.querySelector('#menuAction').style.display = 'block';
                 document.querySelector('#toAudio').href = '/post?id='+docRef.id;
             })
@@ -477,7 +476,7 @@ function uploadFiles(file,date){
 }
 function cleanView(){
     document.querySelector('#uploading').textContent = 'Upload your audio';
-    document.querySelector('#progressBar').children[0].classList.toggle('bg-success');
+    document.querySelector('#progressBar').children[0].classList.toggle('bg-success',false);
     document.querySelector('#progressBar').style.display = 'none';
     document.querySelector('#menuAction').style.display = 'none';
     document.querySelector('#uploadFile').style.display = 'block';

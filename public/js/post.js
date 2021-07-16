@@ -4,8 +4,6 @@ let image = document.getElementById('profileImage');
 window.addEventListener('load',()=>{
     db.collection("post").doc(id).get().then((doc) => {
         if (doc.exists) {
-            //data = doc.data();
-            //initializeAudio(doc.data(),id);
 
             let audioContainer = document.getElementById('audioContainer').children;
 
@@ -25,15 +23,6 @@ window.addEventListener('load',()=>{
                     userInfo.id = doc.data().userId;
                     loadUserInfo(user.data());
                     getImageURL(storage,user.id,image);
-                    
-                    // if (user.exists) {
-                    //     userDetails = user.data();
-                    //     userDetails.id = doc.data().userId;
-                    //     //initializeBreadcrumb(userDetails,id);
-                    // } else {
-                    //     // doc.data() will be undefined in this case
-                    //     console.log("No such document!");
-                    // }            
                 })
                 .catch((error) => {
                     console.log("Error getting documents: ", error);

@@ -1,3 +1,33 @@
+const menuActions = 
+'<div id="menuActions">'+
+    '<a class="dropdown-item" href="/u">My profile</a>'+
+    '<a class="dropdown-item d-none d-sm-none d-md-none d-lg-block d-xl-block" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#uploadModal">Upload</a>'+
+    '<a class="dropdown-item" href="javascript:void(0)" onclick="logout()">Sign out</a>'
++'</div>'
+;
+
+
+
+const loginForm =
+'<div id="formLogin">'+
+    '<form class=\"px-4 pt-3\" id=\"loginForm\" style=\"width: 260px;\">'+
+        '<div class=\"mb-3\">'+
+            '<label for=\"exampleDropdownFormEmail1\" class=\"form-label\">Email address</label>'+
+            '<input type=\"email\" class=\"form-control\" id=\"email\" placeholder=\"email@example.com\" required>'+
+        '</div>'+
+        '<div class=\"mb-3\">'+
+            '<label for=\"exampleDropdownFormPassword1\" class=\"form-label\">Password</label>'+
+            '<input type=\"password\" class=\"form-control\" id=\"password\" placeholder=\"Password\" required>'+
+        '</div>'+
+        '<button type=\"submit\" class=\"btn btn-outline-dark\" onclick="signIn(event)">Sign in</button>'+
+        '<div>'+
+            '<label for=\"googleLogin\" style=\"display: block;\">Also login with:</label>'+
+            '<a href=\"javascript:void(0)\" id=\"googleLogin\" class=\"bi bi-google link-dark fs-3\" onclick=\"loginUsingGoogle()\"></a>'+
+        '</div>'+
+    '</form>'+
+'<div class=\"dropdown-divider\"></div>'+
+'<a class=\"dropdown-item\" href=\"/login\" id=\"signUp\">New around here? Sign up</a>'+
+'</div>';
 const menuHTML = 
     '<div class=\"bg-white shadow-sm container-lg\">'+
         '<ul class=\"nav justify-content-center fs-3\">'+
@@ -10,23 +40,7 @@ const menuHTML =
             '<li class=\"nav-item\" id=\"myDropdown\">'+
                 '<a class=\"nav-link bi bi-person link-dark\" id=\"dropdownMenuButton\" data-bs-toggle=\"dropdown\" data-bs-auto-close=\"outside\" aria-expanded=\"false\" href=\"#\"></a>'+
                 '<div class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuButton\" id=\"dropdown\">'+
-                '<form class=\"px-4 py-3\" id=\"loginForm\" style=\"width: 260px;\">'+
-                    '<div class=\"mb-3\">'+
-                    '<label for=\"exampleDropdownFormEmail1\" class=\"form-label\">Email address</label>'+
-                    '<input type=\"email\" class=\"form-control\" id=\"email\" placeholder=\"email@example.com\" required>'+
-                    '</div>'+
-                    '<div class=\"mb-3\">'+
-                    '<label for=\"exampleDropdownFormPassword1\" class=\"form-label\">Password</label>'+
-                    '<input type=\"password\" class=\"form-control\" id=\"password\" placeholder=\"Password\" required>'+
-                    '</div>'+
-                    '<button type=\"submit\" class=\"btn btn-outline-dark\">Sign in</button>'+
-                    '<div class=\"\">'+
-                    '<label for=\"googleLogin\" style=\"display: block;\">Also login with:</label>'+
-                    '<a href=\"javascript:void(0)\" id=\"googleLogin\" class=\"bi bi-google link-dark\" onclick=\"loginUsingGoogle()\"></a>'+
-                    '</div>'+
-                '</form>'+
-                '<div class=\"dropdown-divider\"></div>'+
-                '<a class=\"dropdown-item\" href=\"/login\" id=\"signUp\">New around here? Sign up</a>'+
+                    loginForm +
                 '</div>'+
             '</li>'+
         '</ul>'+
@@ -51,7 +65,7 @@ const uploadHTML =
                     '</div>' +
                     '<div class="row g-3">' +
                         '<div class="col-md">' +
-                            '<div class="input-group mb-3">' +
+                            '<div class="input-group">' +
                                 '<input type="file" name="file" class="form-control" id="inputGroupFile02" accept="audio/*" required>' +
                             '</div>' +
                         '</div>' +
@@ -60,7 +74,7 @@ const uploadHTML =
                             '<label class="btn btn-outline-danger d-block" for="btn-check-outlined" data-bs-toggle="tooltip" data-bs-placement="top" title="is this audio NSFW?">NSFW</label>' +
                         '</div>' +
                     '</div>' +
-                    '<div class="form-floating mb-3">' +
+                    '<div class="form-floating mb-3 mt-3">' +
                         '<textarea class="form-control" name="desc" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px; max-height: 300px;"></textarea>' +
                         '<label for="floatingTextarea2">Description</label>' +
                     '</div>' +
