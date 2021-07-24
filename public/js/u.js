@@ -10,12 +10,15 @@ let postElementInUse;
 var userValidate;
 let clipboard = new ClipboardJS('.copyLink');
 let image = document.getElementById('profileImage');
+document.getElementById('profileDetailsModal').addEventListener('show.bs.modal',()=>{
+    profileUpdateFormModal = bootstrap.Modal.getInstance(document.getElementById('profileDetailsModal'));
+});
 
 window.addEventListener('load',()=>{
     storage = firebase.storage();
     db = firebase.firestore(); 
     //console.log(userInfo);
-    if(id){
+    if(id && id!='undefined'){
         getUserInfo(db,id,true);
         getImageURL(storage,id,image);
     }
@@ -38,8 +41,8 @@ window.addEventListener('load',()=>{
                 .then((doc) => {
                     if (doc.exists) {
                         userInfo = doc.data();
-                        userInfo.id = user.uid;
-                        loadUserInfo(doc.data());
+                        userInfo.userId = user.uid;
+                        loadUserInfo(doc.data(),true);
                         getUserPosts(user.uid);
                         getImageURL(storage,user.uid,image);
                         validateUser(true);
@@ -416,7 +419,7 @@ function deletePost(id,date,filename){
 //EVENT LISTENERS
 
 document.getElementById('profileDetailsModal').addEventListener('show.bs.modal', function (event) { //Profile details form
-    //var user = firebase.auth().currentUser;
+    console.log(userInfo);
     let profileDetailsform = document.getElementById('profileDetailsForm');
     profileDetailsform.email.value = user().email;
     if(!newUser){
@@ -452,10 +455,8 @@ document.getElementById('saveProfileBtn').addEventListener('click',()=>{ //Profi
         db.collection("user").doc(user().uid).update(obj)
         .then(() => {
             loadUserInfo(obj);
-            myAlert('Profile details updated succesfully');
-            setTimeout(()=>{
-                profileUpdateFormModal.hide();
-            },1100);
+            toast('Profile details updated succesfully',5000,'profile updated');
+            profileUpdateFormModal.hide();
         })
         .catch((error) => {
             console.error("Error writing document: ", error);
@@ -466,14 +467,14 @@ document.getElementById('saveProfileBtn').addEventListener('click',()=>{ //Profi
     }
 });
 
-window.addEventListener('scroll',()=>{ //Load next post once you finish scroll
+window.addEventListener('scroll',()=>{ //Load next posts once you finish scroll
     var d = document.documentElement;
     var offset = d.scrollTop + window.innerHeight;
     var height = d.offsetHeight;
 
-    console.log(offset,height);
+    //console.log(offset,height);
     if (offset >= height-1) {
-        console.log('end');
+        //console.log('end');
         next(last);
     }
 });
@@ -484,6 +485,7 @@ document.getElementById('desc').addEventListener('input',(e)=>{
 
 document.getElementById('editImageContainer').addEventListener('mouseover',(event)=>{
     let element = event.target;
+    element.style.cursor = 'pointer';
     element.querySelector('span').classList.toggle('d-none');
     element.querySelector('span').classList.toggle('d-block');
     element.style.backgroundColor = 'rgba(255,255,255,0.3)';
@@ -491,6 +493,7 @@ document.getElementById('editImageContainer').addEventListener('mouseover',(even
 
 document.getElementById('editImageContainer').addEventListener('mouseout',(event)=>{
     let element = event.target;
+    element.style.cursor = 'default';
     element.querySelector('span').classList.toggle('d-none');
     element.querySelector('span').classList.toggle('d-block');
     element.style.backgroundColor = '';

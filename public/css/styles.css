@@ -1,6 +1,131 @@
 @import url("utilities/loader.css");
 @import url("https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css");
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css");
+
+.input-vertical input[type="range"] {
+  transform: rotate(-90deg);
+}
+
+.form-switch input[type="checkbox"]:checked {
+  background-color: var(--logo);
+  border-color: #d61313;
+}
+.form-switch input[type="checkbox"]:focus {
+  box-shadow: 0 0 0 0.25rem #d6131360;
+  border-color: #d61313;
+}
+
+input[type="range"]:focus::-ms-thumb {
+  box-shadow: 0 0 0 1px var(--bs-secondary),
+    0 0 0 0.25rem rgba(108, 117, 125, 0.25);
+}
+
+input[type="range"]::-moz-range-progress {
+  background: var(--logo);
+  height: 0.5rem;
+  border-radius: 1rem;
+  box-shadow: inset;
+}
+input[type="range"]::-moz-range-thumb {
+  background: var(--bs-secondary);
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+}
+
+input[type="range"]::-moz-range-thumb {
+  background: var(--bs-secondary);
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+}
+
+input[type="range"]:focus::-moz-range-thumb {
+  box-shadow: 0 0 0 1px var(--bs-secondary),
+    0 0 0 0.25rem rgba(108, 117, 125, 0.25);
+}
+
+input[type="range"]::-moz-range-thumb:active {
+  background: var(--bs-secondary);
+}
+input[type="range"]::-webkit-slider-thumb:active {
+  background: var(--bs-secondary);
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+}
+input[type="range"]::-webkit-slider-thumb {
+  background: var(--bs-secondary);
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+}
+input[type="range"]:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 1px var(--bs-secondary),
+    0 0 0 0.25rem rgba(108, 117, 125, 0.25);
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  background: var(--logo);
+}
+/*ms*/
+input[type="range"]::-ms-fill-upper {
+  background: transparent;
+  border-color: transparent;
+}
+
+input[type="range"]::-ms-fill-lower {
+  background: transparent;
+  border-color: transparent;
+}
+input[type="range"]::-ms-track {
+  background: #ffffff;
+}
+input[type="range"]::-ms-fill-lower {
+  height: max(calc(1em - 1px - 1px), 0px);
+  border-radius: 0.5em 0 0 0.5em;
+  margin: -1px 0 -1px -1px;
+  background: linear-gradient(to right, #9cb7d1, #008000);
+  border: 1px solid #b2b2b2;
+  border-right-width: 0;
+}
+
+/*
+
+
+input[type="range"]::-ms-thumb {
+  background: var(--bs-secondary);
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+}
+
+input[type="range"]::-ms-thumb:active {
+  background: var(--bs-secondary);
+}
+input[type="range"]::-ms-fill-lower {
+  background: var(--logo);
+  height: 5rem;
+  border-radius: 1rem;
+  box-shadow: inset;
+}
+input[type="range"]::-webkit-slider-thumb {
+  background: var(--bs-secondary);
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+}
+
+
+input[type="range"]::-webkit-slider-thumb {
+  background: var(--bs-secondary);
+}
+input[type="range"]:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 1px var(--bs-secondary),
+    0 0 0 0.25rem rgba(108, 117, 125, 0.25);
+}
+
+*/
+
+:root {
+  --logo: #ac1111;
+}
+.stc {
+  height: 43px;
+}
 .center {
   height: 100vh;
   max-height: 100vh;
@@ -118,4 +243,28 @@ body {
   to {
     left: 100%;
   }
+}
+
+progress[value] {
+  /* Reset the default appearance */
+  -webkit-appearance: none;
+  appearance: none;
+  height: 30px;
+}
+
+progress::-moz-progress-bar {
+  /* styles */
+  background-color: var(--logo);
+  border-radius: 5px;
+}
+progress[value]::-webkit-progress-bar {
+  background-color: #eee;
+  border-radius: 2px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
+  height: 30px;
+}
+progress[value]::-webkit-progress-value {
+  /* styles */
+  background-color: var(--logo);
+  border-radius: 5px;
 }

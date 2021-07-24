@@ -10,10 +10,7 @@ let uploadBtn;
 document.getElementById('stickyMenu').innerHTML = menuHTML;
 document.getElementById('stickyMenu').classList.add('sticky-top');
 
-
-
 window.addEventListener('load',()=>{
-    
     db = firebase.firestore(); 
     storage = firebase.storage();
     auth = firebase.auth();
@@ -143,6 +140,24 @@ function loginUsingGoogle(){
 
 
 /* GENERAL UTILITIES */
+
+//conver secs to time format
+String.prototype.toHHMMSS = function () {
+    var sec_num = parseInt(this, 10); // don't forget the second param
+    var hours   = Math.floor(sec_num / 3600);
+    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+    var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+    if (hours   < 10) {hours   = "0"+hours;}
+    if (minutes < 10) {minutes = "0"+minutes;}
+    if (seconds < 10) {seconds = "0"+seconds;}
+    if(hours>0){
+        return hours+':'+minutes+':'+seconds;
+    }
+    else{
+        return minutes+':'+seconds;
+    }
+}
 
 //Gives the difference in seconds, minutes, hours and days between the current date and the given date, if the difference is more than a month just show the date.
 function daysAgo(date){
@@ -276,28 +291,37 @@ function clipboardShareLinkProfile(id){
 
 function toast(text,time,type){
     let toastType = 'bi bi-emoji-neutral';
+    let colorStatus = 'secondary text-light'; 
     switch (type) {
         case 'clipboard':
             toastType = 'bi bi-clipboard-check';
             break;
         case 'logged':
             toastType = 'bi bi-person-check';
+            colorStatus = 'success text-light';
             break;
         case 'logged out':
             toastType = 'bi bi-person-x';
+            colorStatus = 'warning text-dark'
             break;
         case 'img updated':
             toastType = 'bi bi-person-square';
+            colorStatus = 'success text-light';
             break;
         case 'upload failed':
             toastType = 'bi bi-cloud-arrow-up';
+            colorStatus = 'danger text-light';
+            break;
+        case 'profile updated':
+            toastType = 'bi bi-person-lines-fill';
+            colorStatus = 'success text-light';
             break;
     }
     let toastHTML =
     '<div class=\"toast align-items-center\" role=\"alert\" aria-live=\"assertive\" aria-atomic=\"true\" >' +
         '<div class=\"fs-6\">'+
             '<div class=\"row\" style=\"height:60px;\">'+
-                '<div class=\"col-auto d-flex align-items-center bg-secondary '+toastType+' text-light rounded-start\">'+
+                '<div class=\"col-auto d-flex align-items-center bg-'+colorStatus+' '+toastType+' rounded-start fs-2\">'+
                 '</div>'+
                 '<div class=\"col d-flex align-items-center\">'+
                     text+
@@ -338,7 +362,9 @@ function getImageURL(storage,id,element){
 function getUserInfo(db,id,profile){
     db.collection("user").doc(id).get().then((doc) => {
         if (doc.exists) {
-            console.warn(userInfo);
+            userInfo = doc.data();
+            userInfo.userId = id;
+            //console.warn(userInfo);
             loadUserInfo(doc.data());
             if (profile) getUserPosts(id);
             //return doc.data();
@@ -352,7 +378,7 @@ function getUserInfo(db,id,profile){
     });
 
 }
-function loadUserInfo(obj){
+function loadUserInfo(obj,profile){
     let details = document.getElementById('detailsContainer');
     console.log(details.children);
     for(let i=0;i<details.children.length;i++){
@@ -360,7 +386,11 @@ function loadUserInfo(obj){
         switch (details.children[i].id) {
             case 'profileDetailsUsername':
                 details.children[i].getElementsByTagName('a')[0].textContent = obj.username || details.children[i].textContent ;
-                details.children[i].getElementsByTagName('a')[0].href = 'u?id='+userInfo.id;
+                console.log(profile);
+                if (!profile) {
+                    details.children[i].getElementsByTagName('a')[0].href = 'u?id=' +  (userInfo.userId);
+                }
+                details.children[i].getElementsByTagName('a')[0].removeAttribute('href');
                 document.getElementsByTagName("title")[0].innerText=(obj.username || details.children[i].textContent) + "'s profile";
             break;
             case 'profileMinDetails':
@@ -389,7 +419,7 @@ function loadUserInfo(obj){
                     const month = new Intl.DateTimeFormat(navigator.language || navigator.userLanguage, {month: 'long'}).format(date);
                     (details.children[i]).textContent = 'User since '+ month + ' ' + date.getFullYear();
                 }
-                else{
+                else if(!(details.children[i]).textContent){
                     (details.children[i]).textContent = '';
                 }
             break;

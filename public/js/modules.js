@@ -32,13 +32,13 @@ const menuHTML =
     '<div class=\"bg-white shadow-sm container-lg\">'+
         '<ul class=\"nav justify-content-center fs-3\">'+
             '<li class=\"nav-item\">'+
-                '<a class=\"nav-link bi bi-house link-dark\" href=\"/\"></a>'+
+                '<a class=\"nav-link bi bi-house link-dark\" href=\"/\" style="line-height:80%;"></a>'+
             '</li>'+
             '<li class=\"nav-item d-flex align-items-center\" style=\"width: 40px;\">'+
                 '<img src=\"/staticFiles/favicon.png\" tabindex=\"-1\" alt=\"logo\" clas=\"user-selection-none\" style=\"width:100%;\">'+
             '</li>'+
             '<li class=\"nav-item\" id=\"myDropdown\">'+
-                '<a class=\"nav-link bi bi-person link-dark\" id=\"dropdownMenuButton\" data-bs-toggle=\"dropdown\" data-bs-auto-close=\"outside\" aria-expanded=\"false\" href=\"#\"></a>'+
+                '<a class=\"nav-link bi bi-person link-dark\" style="line-height:80%;" id=\"dropdownMenuButton\" data-bs-toggle=\"dropdown\" data-bs-auto-close=\"outside\" aria-expanded=\"false\" href=\"#\"></a>'+
                 '<div class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuButton\" id=\"dropdown\">'+
                     loginForm +
                 '</div>'+

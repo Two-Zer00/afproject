@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile's</title>
     <link rel="stylesheet" href="css/styles.css">
+    
     <!-- update the version number as needed -->
     <script defer src="/__/firebase/8.3.1/firebase-app.js"></script>
     <!-- include only the Firebase features as you need -->
@@ -20,14 +21,14 @@
     <script defer src="/__/firebase/init.js"></script>
 </head>
 <body>
-    <div id="stickyMenu"></div>
+    <div id="stickyMenu" class="stc"></div>
 
-    <div class="container-lg bg-white pt-3 pb-3" style="min-height: calc(100vh - 55px) ;">
+    <div class="container-lg bg-white pt-3 pb-3" style="min-height: calc(100vh - 43px) ;">
         <div class="row">
             <div class="col-lg-4 pb-3">
-                <div class="sticky-top" style="top: 70px; z-index: 1010;">
+                <div class="sticky-top" style="top: 57px; z-index: 1010;">
                     <div class="d-flex justify-content-center align-items-center rounded-top border border-1 position-relative" style="width: 100%; min-height: 200px; background-color: rgba(206, 206, 206, 0.534);" id="imageContainer">
-                        <img src="" alt="" style="height: 150px; min-width: 150px; max-width: 150px; object-fit: cover; background-color: rgba(206, 206, 206, 0.534);" id="profileImage" class="rounded-circle border border-3 mt-1 mb-1">
+                        <img src="" alt="" crossorigin="anonymous" style="height: 150px; min-width: 150px; max-width: 150px; object-fit: cover; background-color: rgba(206, 206, 206, 0.534);" id="profileImage" class="rounded-circle border border-3 mt-1 mb-1">
                         <div style="height: 150px; width: 150px;" class="position-absolute rounded-circle d-flex justify-content-center align-items-center pe-none" id="editImageContainer">
                             <span class="bi bi-camera-fill text-decoration-none link-light pe-none d-none" style="font-size: 37.5px;  text-shadow: 0 0 3px black; line-height: 25px;"></span>
                         </div>
@@ -54,7 +55,6 @@
                         </div>
                     </div>
                 </div>
-                <script data-ad-client="ca-pub-7731037445831235" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
             </div>
             <div class="col">
                 <div class="d-block text-center" id="spinner">
@@ -147,6 +147,8 @@
                         </div>
                         
                     </form>
+                </div>
+                <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" id="saveProfileBtn">Save changes</button>
                 </div>
@@ -174,9 +176,7 @@
 
     <div id="uploadModalContainer"></div>
 
-    <div class="toast-container fixed-bottom start-50 translate-middle-x" style="bottom: 10px;" id="toastContainer">
-
-    </div>
+    <div class="toast-container fixed-bottom start-50 translate-middle-x" style="bottom: 10px;" id="toastContainer"></div>
     <div id="floatButton"></div>
     <script src="js/modules.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
