@@ -123,9 +123,6 @@ input[type="range"]:focus::-webkit-slider-thumb {
 :root {
   --logo: #ac1111;
 }
-.stc {
-  height: 43px;
-}
 .center {
   height: 100vh;
   max-height: 100vh;
