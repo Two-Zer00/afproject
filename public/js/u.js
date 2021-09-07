@@ -448,6 +448,8 @@ document.getElementById('saveProfileBtn').addEventListener('click',()=>{ //Profi
         db.collection("user").doc(user().uid).set(obj)
         .then(() => {
             loadUserDetails(obj);
+            userInfo = obj;
+            userInfo.userId = user().uid;
             myAlert('Profile details created succesfully');
             setTimeout(()=>{
                 profileUpdateFormModal.hide();
