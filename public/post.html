@@ -76,14 +76,15 @@
                     <h3 class="text-center m-1" id="title">Title</h3>
                     <p class="font-monospace m-0 text-muted" id="date"></p>
                     <div class="row">
-                        <div class="col-auto d-flex justify-content-center align-items-center">
-                            <button id="playBtn" class="btn btn-outline-secondary bi bi-play fs-2 rounded-circle d-flex justify-content-center align-items-center disabled" onclick="play(this)" style="width: 60px; height: 60px;"></button>
+                        <div class="col-auto p-0 d-flex justify-content-center align-items-center">
+                            <button id="playBtn" class="btn btn-outline-secondary bi bi-play fs-2 rounded-circle d-flex justify-content-center align-items-center disabled m-1" onclick="play(this)" style="width: 60px; height: 60px;"></button>
                         </div>
                         <div class="col d-flex justify-content-center align-items-center">
-                            <div id="progressBar" class="w-100 d-block position-relative" style="height: 50px;">
-                                <progress value="0" max="100" class="border w-100 rounded bg-light"></progress>
+                            <div id="progressBar" class="w-100 d-block position-relative" style="height: 50px;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Hello">
+                                <progress value="0" max="100" class="border w-100 rounded bg-light" style="cursor: pointer;"></progress>
                                 <span id="currentTime" class="position-absolute bottom-0 start-0">00:00</span>
                                 <span id="duration" class="position-absolute bottom-0 end-0">08:21</span>
+                                <span class="position-absolute bg-logo d-none text-light pe-none rounded fw-bold px-1" id="timer" style="font-size: 10px;">hello</span>
                             </div>
                         </div>
                         <div class="col-auto ps-0">
@@ -105,7 +106,8 @@
     </div>
     <div id="floatButton"></div>
     <div id="uploadModalContainer"></div>
-    <div id="toastContainer" class="toast-container fixed-bottom start-50 translate-middle-x"></div>
+    <div id="toastContainer" class="toast-container fixed-bottom start-50 translate-middle-x" style="bottom: 10px;"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
     <script src="js/modules.js"></script>
     <script src="js/color-thief.umd.js"></script>

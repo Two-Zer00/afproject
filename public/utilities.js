@@ -141,7 +141,7 @@ function loginUsingGoogle(){
 
 /* GENERAL UTILITIES */
 
-//conver secs to time format
+//convert secs to time format
 String.prototype.toHHMMSS = function () {
     var sec_num = parseInt(this, 10); // don't forget the second param
     var hours   = Math.floor(sec_num / 3600);
@@ -365,7 +365,7 @@ function getUserInfo(db,id,profile){
             userInfo = doc.data();
             userInfo.userId = id;
             //console.warn(userInfo);
-            loadUserInfo(doc.data());
+            loadUserInfo(doc.data(),profile);
             if (profile) getUserPosts(id);
             //return doc.data();
         } else {
@@ -388,9 +388,11 @@ function loadUserInfo(obj,profile){
                 details.children[i].getElementsByTagName('a')[0].textContent = obj.username || details.children[i].textContent ;
                 console.log(profile);
                 if (!profile) {
+                    details.children[i].getElementsByTagName('a')[0].removeAttribute('href');
+                }
+                else{
                     details.children[i].getElementsByTagName('a')[0].href = 'u?id=' +  (userInfo.userId);
                 }
-                details.children[i].getElementsByTagName('a')[0].removeAttribute('href');
                 document.getElementsByTagName("title")[0].innerText=(obj.username || details.children[i].textContent) + "'s profile";
             break;
             case 'profileMinDetails':
@@ -468,18 +470,7 @@ function uploadFiles(file,date){
             break;
             }
     }, function(error) {
-        // A full list of error codes is available at
-        // https://firebase.google.com/docs/storage/web/handle-errors
-        switch (error.code) {
-            case 'storage/unauthorized':
-            // User doesn't have permission to access the object
-            break;
-            case firebase.storage.TaskState.RUNNING: // or 'running'
-                console.log('Upload is running');
-            break;
-            }
-    }, function(error) {
-        cleanView();
+        //cleanView();
         toast(error.message,2000,'upload failed');
     }, function() {
         // Upload completed successfully, now we can get the download URL
@@ -527,7 +518,10 @@ function loadUpload(){
     let form = document.getElementById('uploadFile');
     obj={"title":form.title.value,"desc":form.desc.value,"nsfw":form.nsfw.checked};
     let file = form.file.files[0];
-    if(form.reportValidity() && (file.type).includes('audio') && ((file.size/1024)/1024)<=60){
+    if(((file.size/1024)/1024)>60){
+        form.file.setCustomValidity('File size bigger than 60MB');
+    }
+    if(form.reportValidity() && (file.type).includes('audio')){
         uploadFiles(file,Date.now());
     }
 }

@@ -10,6 +10,9 @@ let postElementInUse;
 var userValidate;
 let clipboard = new ClipboardJS('.copyLink');
 let image = document.getElementById('profileImage');
+
+
+
 document.getElementById('profileDetailsModal').addEventListener('show.bs.modal',()=>{
     profileUpdateFormModal = bootstrap.Modal.getInstance(document.getElementById('profileDetailsModal'));
 });
@@ -19,7 +22,7 @@ window.addEventListener('load',()=>{
     db = firebase.firestore(); 
     //console.log(userInfo);
     if(id && id!='undefined'){
-        getUserInfo(db,id,true);
+        getUserInfo(db,id,false);
         getImageURL(storage,id,image);
     }
     firebase.auth().onAuthStateChanged(function(user) {
@@ -42,7 +45,7 @@ window.addEventListener('load',()=>{
                     if (doc.exists) {
                         userInfo = doc.data();
                         userInfo.userId = user.uid;
-                        loadUserInfo(doc.data(),true);
+                        loadUserInfo(doc.data(),false);
                         getUserPosts(user.uid);
                         getImageURL(storage,user.uid,image);
                         validateUser(true);
@@ -66,6 +69,9 @@ window.addEventListener('load',()=>{
             }
         }
         else if(!id){
+            window.location.replace('/');
+        }
+        else{
             window.location.replace('/');
         }
     });
@@ -581,4 +587,3 @@ image.addEventListener('load', function() {
     console.log(pickTextColorBasedOnBgColorAdvanced(color,'#FFFFFF','#000000'));
     document.getElementById('shareDots').style.color = pickTextColorBasedOnBgColorAdvanced(color,'#fff','#000');
 });
-

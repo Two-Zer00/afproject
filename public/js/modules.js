@@ -5,9 +5,6 @@ const menuActions =
     '<a class="dropdown-item" href="javascript:void(0)" onclick="logout()">Sign out</a>'
 +'</div>'
 ;
-
-
-
 const loginForm =
 '<div id="formLogin">'+
     '<form class=\"px-4 pt-3\" id=\"loginForm\" style=\"width: 260px;\">'+
@@ -29,7 +26,7 @@ const loginForm =
 '<a class=\"dropdown-item\" href=\"/login\" id=\"signUp\">New around here? Sign up</a>'+
 '</div>';
 const menuHTML = 
-    '<div class=\"bg-white shadow-sm container-lg\">'+
+    '<div class=\"bg-white shadow-sm container-xl\">'+
         '<ul class=\"nav justify-content-center fs-3\">'+
             '<li class=\"nav-item\">'+
                 '<a class=\"nav-link bi bi-house link-dark\" href=\"/\" style="line-height:80%;"></a>'+
@@ -39,7 +36,7 @@ const menuHTML =
             '</li>'+
             '<li class=\"nav-item\" id=\"myDropdown\">'+
                 '<a class=\"nav-link bi bi-person link-dark\" style="line-height:80%;" id=\"dropdownMenuButton\" data-bs-toggle=\"dropdown\" data-bs-auto-close=\"outside\" aria-expanded=\"false\" href=\"#\"></a>'+
-                '<div class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuButton\" id=\"dropdown\">'+
+                '<div class=\"dropdown-menu dropdown-menu-end dropdown-menu-lg\" aria-labelledby=\"dropdownMenuButton\" id=\"dropdown\">'+
                     loginForm +
                 '</div>'+
             '</li>'+
@@ -95,3 +92,7 @@ const uploadFloatButton =
 '<div id="uploadBtn" class="rounded-circle text-light border border-2 d-lg-none" style="background: #CA2727; width: 75px; height: 75px;" data-bs-toggle="modal" data-bs-target="#uploadModal">' +
     '<span class="bi bi-mic fs-1 d-flex justify-content-center align-items-center" style="height: 100%;"></span>' +
 '</div>';
+
+const requestForm = '<button class="btn btn-secondary">request</button>';
+
+

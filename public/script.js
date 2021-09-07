@@ -19,6 +19,7 @@ window.addEventListener('load',()=>{
     db.collection("post").orderBy('date','desc').limit(10).get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             createElement(doc.id,doc.data());
+            setImageURLFromId();
         });
         let spinners = document.getElementById('user').querySelector('#spinner');
         spinners.remove();
@@ -26,66 +27,27 @@ window.addEventListener('load',()=>{
         console.log("Error getting documents: ", error);
     });
 });
+let postUser = [];
 function createElement(id,obj){
-    let element = document.createElement('a');
-    element.classList.add('list-group-item', 'list-group-item-action');
-    element.href = 'post?id=' + id;
+    let item = `
+                    <div class="d-flex w-100 h-100 justify-content-between">
+                        <div>
+                            <h5 class="mb-1 d-inline">${obj.title}</h5>
+                            ${(obj.nsfw==true)?'<p class="p-0 m-0 d-inline" style="font-size:10px;"><span class="badge rounded-pill bg-danger">NSFW</span></p>':''}
+                        </div>
+                        <div>
+                            <small ${((daysAgo(obj.date)).indexOf("ago")!=-1) ? 'title="'+(new Date(obj.date)).toLocaleString()+'"' :""}>${daysAgo(obj.date)}</small>
+                        </div>
+                    </div>
+                    <p class="mb-1">${obj.desc}</p>
+                    <small class="text-muted">${getUsernameFromId(obj.userId) || obj.userId}</small>
+                `;
+    let parentElement = document.createElement('a');
+    parentElement.classList.add('list-group-item','list-group-item-action');
+    parentElement.href = 'post?id='+id;
+    parentElement.innerHTML = item;
 
-    let container = document.createElement('div');
-    container.classList.add('row');
-
-    let profileImageContaner = document.createElement('div');
-    profileImageContaner.classList.add('col-auto','p-0');
-    let imageContainer = document.createElement('div');
-    imageContainer.classList.add('d-flex','justify-content-center','align-items-center');
-    let profileImage = document.createElement('img');
-    profileImage.style.height = '80px';
-    profileImage.style.width = '80px';
-    profileImage.classList.add('bg-white', 'rounded-circle', 'border', 'border-3', 'mt-1' ,'mb-1');
-    profileImage.style.objectFit = 'cover';
-    profileImage.style.backgroundColor = 'rgba(206, 206, 206, 0.534)';
-    getImagesURL(obj.userId,profileImage);
-    imageContainer.appendChild(profileImage);
-    profileImageContaner.appendChild(imageContainer);
-
-    container.appendChild(profileImageContaner);
-
-    let postContainer = document.createElement('div');
-    postContainer.classList.add('col','text-truncate');
-
-
-    let subElement = document.createElement('div');
-    subElement.classList.add('d-flex', 'w-100', 'justify-content-between');
-
-    let subElement1 = document.createElement('h5');
-    subElement1.classList.add('mb-1');
-    subElement1.textContent = obj.title || obj.user[0];
-    let subElement2 = document.createElement('small');
-    subElement2.textContent = daysAgo(obj.date);
-    if((daysAgo(obj.date)).indexOf("ago")!=-1){
-        subElement2.title = (new Date(obj.date)).toLocaleString();
-    }
-    subElement.appendChild(subElement1);
-    subElement.appendChild(subElement2);
-    
-    let subElement3 = document.createElement('p');
-    subElement3.classList.add('mb-1');
-    subElement3.style.overflow = 'hidden';
-    subElement3.style.textOverflow = 'ellipsis';
-    subElement3.textContent = obj.desc;
-
-    let subElement4 = document.createElement('small');
-    subElement4.classList.add('text-muted');
-    subElement4.textContent = getUsernameFromId(obj.userId) || obj.userId;
-
-    postContainer.appendChild(subElement);
-    postContainer.appendChild(subElement3);
-    postContainer.appendChild(subElement4);
-
-
-    container.appendChild(postContainer);
-    element.appendChild(container);
-    document.querySelector('#listContent').appendChild(element);
+    document.querySelector('#listContent').appendChild(parentElement);
 }
 function createElementUser(obj){
     let element = document.createElement('a');
@@ -96,24 +58,40 @@ function createElementUser(obj){
 }
 function getUsernameFromId(id){
     let username;
-    //console.warn(id);
     for(let i=0;i<users.length;i++){
-        
         if(users[i].id===id){
-            //console.warn(users[i].id,id);
             username=users[i].username;
         }
     }
     return username;
 }
 let userProfileImage = new Array();
-function getImagesURL(id,element){
-    firebase.storage().refFromURL('gs://af-project-3d9e5.appspot.com/userPhotos/'+id+'/profileImage.jpg').getDownloadURL().then((url)=>{
-        element.src = url;
-        element.parentElement.classList.remove('load');
-    }).catch((error)=>{
-        console.error(error);
-        element.src = '/staticFiles/profileImageDefault.jpg';
-        element.parentElement.parentElement.classList.remove('load');
+// async function getImagesURL(id,element){
+
+//     firebase.storage().refFromURL('gs://af-project-3d9e5.appspot.com/userPhotos/'+id+'/profileImage.jpg').getDownloadURL().then((url)=>{
+//         //element.src = url;
+//         //userProfileImage.push({id:id,profileImage:url});
+//         return url;
+//         //element.parentElement.classList.remove('load');
+//     }).catch((error)=>{
+//         console.error(error);
+//         return '/staticFiles/profileImageDefault.jpg';
+//         //element.src = '/staticFiles/profileImageDefault.jpg';
+//         //element.parentElement.parentElement.classList.remove('load');
+//     });
+// }
+
+function setImageURLFromId(){
+    postUser.forEach(element=>{
+        element.promiseURL = firebase.storage().refFromURL('gs://af-project-3d9e5.appspot.com/userPhotos/'+element.userId+'/profileImage.jpg').getDownloadURL();
     });
+}
+
+async function getProfileImageURL(id) {
+    const index = postUser.findIndex(element=>element.userId === id);
+    if(index){
+        postUser[index].promiseURL = firebase.storage().refFromURL('gs://af-project-3d9e5.appspot.com/userPhotos/'+id+'/profileImage.jpg').getDownloadURL().then(url=>url);
+        return postUser[index].promiseURL;
+    }
+
 }
