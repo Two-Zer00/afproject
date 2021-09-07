@@ -6,13 +6,11 @@ let progresss = document.getElementById("progressBar").children[0];
 let volumen = document.getElementById("volumen");
 let player = document.getElementById('player').children;
 let checkVolume = document.getElementById('checkVolume');
-let clipboard = new ClipboardJS('.copyLink');
 volumeCheck();
 checkVolume.addEventListener('change',()=>{
     
     volumeCheck();
 });
-
 function volumeCheck(){
     if(checkVolume.checked){
         volumen.step = '1';
@@ -23,10 +21,6 @@ function volumeCheck(){
         volumen.max = '1';
     }
 }
-clipboard.on('success', (e) => {
-    toast('Link saved in clipboard!',2000,'clipboard');
-});
-
 window.addEventListener('load',()=>{
     if(id){
         db.collection("post").doc(id).get().then((doc) => {
@@ -69,7 +63,6 @@ window.addEventListener('load',()=>{
         window.location.replace('/');
     }
 });
-
 image.addEventListener('load', function() {
     const colorRGB = colorThief.getColor(image);
     const color = 'rgb('+colorRGB[0] +','+ colorRGB[1]+','+colorRGB[2]+')';
@@ -86,7 +79,6 @@ audio.addEventListener('loadeddata',()=>{
         gainNode.gain.value = element.target.value;
     });
 });
-
 function play(element){
     if(audio.paused){
         audio.play();
@@ -100,14 +92,12 @@ function play(element){
         audio.pause();
     }
 }
-
 function secToPorcentage(time,totalTime){
     return (time*100)/totalTime;
 }
 function porcentageToSecs(porcentage,totalSecs){
     return (porcentage*totalSecs)/100;
 }
-
 function pixToPorcentage(pixels,totalPixels){
     return (pixels*100)/totalPixels;
 }
@@ -116,31 +106,24 @@ progresss.addEventListener("click",(event)=>{
     let x = event.clientX - rect.left; //x position within the element.
     audio.currentTime = porcentageToSecs(pixToPorcentage(x,progresss.offsetWidth),audio.duration) - audio.style.margin;
 });
-
 progresss.addEventListener("mousemove",(event)=>{
     let rect = event.target.getBoundingClientRect();
     let x = event.clientX - rect.left; //x position within the element.
-    let y = event.clientY - rect.top;  //y position within the element.
+    //let y = event.clientY - rect.top;  //y position within the element.
     let time = ((porcentageToSecs(pixToPorcentage(x,progresss.offsetWidth),audio.duration) - audio.style.margin).toString()).toHHMMSS();
     let timerContainer = event.target.parentElement.querySelector('#timer');
     timerContainer.textContent = time;
-    timerContainer.style.top = (y-timerContainer.offsetHeight).toFixed(0)+'px';
-    timerContainer.style.left = (x-timerContainer.offsetWidth/2).toFixed(0) + 'px';
-    //timerContainer.classList.add(`top-${)}`);
+    timerContainer.style.top = ((-5)-timerContainer.offsetHeight).toFixed(0)+'px';
+    let temp = (Math.round(x+.25)<(event.target.offsetWidth-timerContainer.offsetWidth))?(Math.round(x+.25)-timerContainer.offsetWidth/2):(Math.round(event.target.offsetWidth-timerContainer.offsetWidth));
+    // /console.log(temp);
+    timerContainer.style.left = (temp).toFixed(0) + 'px';
 });
 progresss.addEventListener('mouseenter',(event)=>{
     let timerContainer = event.target.parentElement.querySelector('#timer');
     timerContainer.classList.remove('d-none');
     timerContainer.classList.add('d-block');
-    // timerContainer.textContent = time;
-    // timerContainer.style.top = y+'px';
-    // timerContainer.style.left = x + 'px';
 });
 progresss.addEventListener("mouseleave",(event)=>{
-    // let rect = event.target.getBoundingClientRect();
-    // let x = event.clientX - rect.left; //x position within the element.
-    // let y = event.clientY - rect.top;  //y position within the element.
-    // let time = ((porcentageToSecs(pixToPorcentage(x,progresss.offsetWidth),audio.duration) - audio.style.margin).toString()).toHHMMSS();
     let timerContainer = event.target.parentElement.querySelector('#timer');
     timerContainer.classList.remove('d-block');
     timerContainer.classList.add('d-none');

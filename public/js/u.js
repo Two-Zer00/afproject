@@ -8,7 +8,6 @@ let newProfileUpdate = new bootstrap.Modal(document.getElementById('profileDetai
 let postInUse = '';
 let postElementInUse;
 var userValidate;
-let clipboard = new ClipboardJS('.copyLink');
 let image = document.getElementById('profileImage');
 
 
@@ -26,15 +25,11 @@ window.addEventListener('load',()=>{
         getImageURL(storage,id,image);
     }
     firebase.auth().onAuthStateChanged(function(user) {
-        console.warn('AUTH');
         if(user){
-            //console.warn('USER AUTH ' + id,user.uid);
             if(id&&id===user.uid){
-                //console.log(id + ' and ' + user.uid + ' are equal');
                 validateUser(true);
             }
             else if(userInfo&&userInfo.id===user.uid){
-                //console.log(userDetails.id + ' and ' + user.uid + ' are equal');
                 validateUser(true);
             }
             else if(!id){
@@ -112,24 +107,15 @@ function getUserPosts(id){
 function createElement(id,object){
     let cardElement = document.createElement('div');
     cardElement.classList.add('card','w-100','mb-2','position-relative');
-    //let cardHeader = document.createElement('div');
-    //cardHeader.classList.add('card-header');
-
-    
 
     let cardHeaderText = document.createElement('h5');
     cardHeaderText.classList.add('card-title');
     cardHeaderText.textContent = object.title;
     cardHeaderText.id="headerText";
-    
-    //cardHeader.appendChild(cardHeaderText);
-
-    
-    
-    //cardElement.appendChild(cardHeader);
 
     let cardBody = document.createElement('div');
     cardBody.classList.add('card-body');
+
     let cardBodyContent = document.createElement('p');
     cardBodyContent.classList.add('card-text','text-break','m-0');
     cardBodyContent.textContent = object.desc;
@@ -139,11 +125,14 @@ function createElement(id,object){
     dropdown.classList.add('dropdown','p-3','position-absolute','top-0','end-0');
     dropdown.style.zIndex = '5';
     dropdown.style.transform = 'rotate(0)';
+    dropdown.style.cursor = 'pointer';
+
     let dropdownBtn = document.createElement('a');
     dropdownBtn.id = 'dropdownButton';
     dropdownBtn.classList.add('link-dark','bi','bi-three-dots-vertical','streched-link');
     dropdownBtn.setAttribute('data-bs-toggle','dropdown');
     dropdownBtn.setAttribute('aria-expanded','false');
+
     let dropdownList = document.createElement('ul');
     dropdownList.classList.add('dropdown-menu','dropdown-menu-end');
     dropdownList.setAttribute('aria-labelledby',dropdownBtn.id);
@@ -425,7 +414,6 @@ function deletePost(id,date,filename){
 //EVENT LISTENERS
 
 document.getElementById('profileDetailsModal').addEventListener('show.bs.modal', function (event) { //Profile details form
-    console.log(userInfo);
     let profileDetailsform = document.getElementById('profileDetailsForm');
     profileDetailsform.email.value = user().email;
     if(!newUser){
@@ -450,7 +438,8 @@ document.getElementById('saveProfileBtn').addEventListener('click',()=>{ //Profi
             loadUserDetails(obj);
             userInfo = obj;
             userInfo.userId = user().uid;
-            myAlert('Profile details created succesfully');
+            console.warn(obj);
+            //myAlert('Profile details created succesfully');
             setTimeout(()=>{
                 profileUpdateFormModal.hide();
             },500);
@@ -463,6 +452,9 @@ document.getElementById('saveProfileBtn').addEventListener('click',()=>{ //Profi
         db.collection("user").doc(user().uid).update(obj)
         .then(() => {
             loadUserInfo(obj);
+            userInfo = obj;
+            userInfo.userId = user().uid;
+            console.warn(obj);
             toast('Profile details updated succesfully',5000,'profile updated');
             profileUpdateFormModal.hide();
         })
@@ -586,6 +578,6 @@ image.addEventListener('load', function() {
     const colorRGB = colorThief.getColor(image);
     const color = 'rgb('+colorRGB[0] +','+ colorRGB[1]+','+colorRGB[2]+')';
     image.parentElement.style.backgroundColor = color;
-    console.log(pickTextColorBasedOnBgColorAdvanced(color,'#FFFFFF','#000000'));
+    //console.log(pickTextColorBasedOnBgColorAdvanced(color,'#FFFFFF','#000000'));
     document.getElementById('shareDots').style.color = pickTextColorBasedOnBgColorAdvanced(color,'#fff','#000');
 });

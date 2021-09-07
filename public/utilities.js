@@ -7,6 +7,7 @@ let toastContainer = document.getElementById('toastContainer');
 const colorThief = new ColorThief();
 let userInfo = {};
 let uploadBtn;
+let clipboard = new ClipboardJS('.copyLink');
 document.getElementById('stickyMenu').innerHTML = menuHTML;
 document.getElementById('stickyMenu').classList.add('sticky-top');
 
@@ -36,11 +37,7 @@ window.addEventListener('load',()=>{
         
     });
 });
-
-
-
-
-/*MENU UTILITIES */
+/*MENU UTILITIES*/
 
 //Get the user logged info and check if there are any user logged in the app null if there no user logged.
 function user(){
@@ -338,12 +335,15 @@ function toast(text,time,type){
     let toast = new bootstrap.Toast(toastContainer.querySelector('.toast'),{animation:true,autohide:true,delay:time||1000});
     toast.show();
 }
+clipboard.on('success', function(e) {
+    toast('Link saved in clipboard!',2000,'clipboard');
+});
 
 
 /* USER INFO FUNCTIONS */
 
 function getImageURL(storage,id,element){
-    console.info(id);
+    //console.info(id);
     var pathReference = storage.ref('userPhotos/'+id+'/profileImage.jpg');
     pathReference.getDownloadURL()
     .then((url) => {
@@ -362,14 +362,12 @@ function getImageURL(storage,id,element){
 function getUserInfo(db,id,profile){
     db.collection("user").doc(id).get().then((doc) => {
         if (doc.exists) {
-            userInfo = doc.data();
-            userInfo.userId = id;
-            //console.warn(userInfo);
-            loadUserInfo(doc.data(),profile);
+            let objTemp = doc.data();
+            objTemp.userId = id;
+            loadUserInfo(objTemp,profile);
             if (profile) getUserPosts(id);
             //return doc.data();
         } else {
-            // doc.data() will be undefined in this case
             console.log("No such document!");
         }            
     })
@@ -380,13 +378,14 @@ function getUserInfo(db,id,profile){
 }
 function loadUserInfo(obj,profile){
     let details = document.getElementById('detailsContainer');
-    console.log(details.children);
+    //console.log(details.children);
+    userInfo = obj;
     for(let i=0;i<details.children.length;i++){
         //console.log(details.children[i]);
         switch (details.children[i].id) {
             case 'profileDetailsUsername':
                 details.children[i].getElementsByTagName('a')[0].textContent = obj.username || details.children[i].textContent ;
-                console.log(profile);
+                //console.log(profile);
                 if (!profile) {
                     details.children[i].getElementsByTagName('a')[0].removeAttribute('href');
                 }
@@ -434,7 +433,6 @@ function loadUserInfo(obj,profile){
         document.getElementById('copyLink').setAttribute('data-clipboard-text',window.location.href);
     }
 }
-
 function uploadFiles(file,date){
     // Upload file and metadata to the object 'images/mountains.jpg'
     uploadTask = storage.ref().child('audio/'+user().uid+'/'+date+'/'+file.name).put(file);
