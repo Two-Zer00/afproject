@@ -41,17 +41,19 @@ window.addEventListener('load',()=>{
                 player.title.textContent = (doc.data()).title;
                 player.date.textContent = (new Date((doc.data()).date)).toLocaleDateString();
                 player.description.textContent = (doc.data()).desc;
-                db.collection("user").doc(doc.data().userId)
-                    .get()
-                    .then((user) => {
-                        userInfo = doc.data();
-                        userInfo.id = doc.data().userId;
-                        loadUserInfo(user.data(),true);
-                        getImageURL(storage,user.id,image);
-                    })
-                    .catch((error) => {
-                        console.log("Error getting documents: ", error);
-                    });
+                // db.collection("user").doc(doc.data().userId)
+                //     .get()
+                //     .then((user) => {
+                //         userInfo = doc.data();
+                //         userInfo.userId = doc.data().userId;
+                //         loadUserInfo(user.data(),true);
+                //         getImageURL(storage,user.id,image);
+                //     })
+                //     .catch((error) => {
+                //         console.log("Error getting documents: ", error);
+                //     });
+                getUserInfo(db,doc.data().userId,true);
+                getImageURL(storage,doc.data().userId,image);
             } else {
                 toast('post not found',2000);
             }
@@ -78,7 +80,17 @@ audio.addEventListener('loadeddata',()=>{
     volumen.addEventListener('input',(element)=>{
         gainNode.gain.value = element.target.value;
     });
+    progresss.classList.remove('pe-none');
+    progresss.classList.remove('loadContainer');
 });
+
+audio.addEventListener('seeking',()=>{
+    progresss.classList.add('loadContainer');
+});
+audio.addEventListener('seeked',()=>{
+    progresss.classList.remove('loadContainer');
+});
+
 function play(element){
     if(audio.paused){
         audio.play();

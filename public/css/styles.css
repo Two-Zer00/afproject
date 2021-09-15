@@ -257,16 +257,46 @@ progress[value] {
 progress::-moz-progress-bar {
   /* styles */
   background-color: var(--logo);
-  border-radius: 5px;
 }
 progress[value]::-webkit-progress-bar {
   background-color: #eee;
-  border-radius: 2px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
   height: 30px;
 }
 progress[value]::-webkit-progress-value {
   /* styles */
   background-color: var(--logo);
-  border-radius: 5px;
+}
+
+/* option button */
+
+.optionButton:hover {
+  box-shadow: 5px 10px #888888;
+}
+
+.loadContainer {
+  background-image: linear-gradient(
+    90deg,
+    rgba(146, 146, 146, 0) 25%,
+    var(--logo) 37%,
+    rgba(146, 146, 146, 0) 63%
+  );
+  width: 100%;
+  height: 0.6rem;
+  list-style: none;
+  background-size: 400% 100%;
+  background-position: 100% 50%;
+  animation: skeleton-loading 1.4s ease infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 100% 75%;
+  }
+  50% {
+    background-position: 75% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
 }

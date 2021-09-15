@@ -34,39 +34,39 @@ window.addEventListener('load',()=>{
             }
             else if(!id){
                 console.log('Getting credential from auth');
-                db.collection("user").doc(user.uid)
-                .get()
-                .then((doc) => {
-                    if (doc.exists) {
-                        userInfo = doc.data();
-                        userInfo.userId = user.uid;
-                        loadUserInfo(doc.data(),false);
-                        getUserPosts(user.uid);
-                        getImageURL(storage,user.uid,image);
-                        validateUser(true);
-                    } else {
-                        // doc.data() will be undefined in this case
-                        console.log("No such document!");
-                        userDetails = new Object();
-                        userDetails.id=user.uid;
-                        newUser = true;
-                        let profileDetailsModal = document.getElementById('profileDetailsModal'); 
-                        profileDetailsModal.getElementsByClassName('modal-header')[0].getElementsByTagName('button')[0].disabled = true;
-                        profileDetailsModal.getElementsByClassName('modal-body')[0].getElementsByTagName('button')[0].disabled = true;
-                        //console.warn(myModalEl.getElementsByClassName('modal-body')[0].children[1]);
-                        myAlert('To enable your profile, please fill out all the field or at least the required ones(username)',5000);
-                        newProfileUpdate.show();
-                    }            
-                })
-                .catch((error) => {
-                    console.log("Error getting documents: ", error);
-                });
+                getUserInfo(db,user.uid,false);
+                getImageURL(storage,user.uid,image);
+                validateUser(true);
+                // db.collection("user").doc(user.uid)
+                // .get()
+                // .then((doc) => {
+                //     if (doc.exists) {
+                //         userInfo = doc.data();
+                //         userInfo.userId = user.uid;
+                //         loadUserInfo(doc.data(),false);
+                //         //getUserPosts(user.uid);
+                //         getImageURL(storage,user.uid,image);
+                //         validateUser(true);
+                //     } else {
+                //         // doc.data() will be undefined in this case
+                //         document.getElementById('spinner').remove(); //Remove spinner
+                //         document.getElementById('cardContainerParent').textContent = 'This user had no posts yet.'; //Show message about this users does not have any post
+                //         console.log("No such document!");
+                //         userDetails = {};
+                //         userDetails.id=user.uid;
+                //         newUser = true;
+                //         toast('To activate your profile, please fill out all the field or at least the required ones(username)',5000,'profile updated');
+                //         newProfileUpdate._element.getElementsByClassName('modal-header')[0].getElementsByTagName('button')[0].disabled = true;
+                //         newProfileUpdate._element.getElementsByClassName('modal-footer')[0].getElementsByTagName('button')[0].disabled = true;
+                //         newProfileUpdate.show();
+                //     }            
+                // })
+                // .catch((error) => {
+                //     console.log("Error getting documents: ", error);
+                // });
             }
         }
         else if(!id){
-            window.location.replace('/');
-        }
-        else{
             window.location.replace('/');
         }
     });
@@ -80,8 +80,6 @@ function getUserPosts(id){
     query = db.collection("post").
     where("userId", "==" ,id)
     .limit(6);
-
-
     query.get()
     .then((querySnapshot) => {
         if(querySnapshot.docs.length>0){
@@ -122,7 +120,7 @@ function createElement(id,object){
     cardBodyContent.id="bodyContent";
 
     let dropdown = document.createElement('div');
-    dropdown.classList.add('dropdown','p-3','position-absolute','top-0','end-0');
+    dropdown.classList.add('dropdown','p-3','position-absolute','top-0','end-0','optionButton');
     dropdown.style.zIndex = '5';
     dropdown.style.transform = 'rotate(0)';
     dropdown.style.cursor = 'pointer';

@@ -315,20 +315,22 @@ function toast(text,time,type){
             break;
     }
     let toastHTML =
-    '<div class=\"toast align-items-center\" role=\"alert\" aria-live=\"assertive\" aria-atomic=\"true\" >' +
-        '<div class=\"fs-6\">'+
-            '<div class=\"row\" style=\"height:60px;\">'+
-                '<div class=\"col-auto d-flex align-items-center bg-'+colorStatus+' '+toastType+' rounded-start fs-2\">'+
-                '</div>'+
-                '<div class=\"col d-flex align-items-center\">'+
-                    text+
-                '</div>'+
-                '<div class=\"col-auto d-flex align-items-center border-start\">'+
-                    '<a class=\"me-2 text-decoration-none link-dark fw-bolder\" data-bs-dismiss=\"toast\" aria-label=\"Close\" href=\"javascript:void(0)\">Dismiss</a>'+
-                '</div>'+
-            '</div>'+
-        '</div>'+
-    '</div>';
+    `<div class=\"toast align-items-center\" role=\"alert\" aria-live=\"assertive\" aria-atomic=\"true\" > 
+        <div class=\"fs-6\">
+            <div class=\"row\" style="min-height:50px;">
+                <div class=\"col-auto d-flex align-items-center bg-${colorStatus} ${toastType} rounded-start fs-2\">
+                </div>
+                <div class=\"col d-flex align-items-center\">
+                    ${text}
+                </div>
+                <div class=\"col-auto d-flex align-items-center border-start\">
+                    <a class=\"me-2 text-decoration-none link-dark fw-bolder\" data-bs-dismiss=\"toast\" aria-label=\"Close\" href=\"javascript:void(0)\">Dismiss</a>
+                </div>
+            </div>
+        </div>
+    </div>`;
+
+
 
     toastContainer.innerHTML = toastHTML;
     toastContainer.style.zIndex = '1050';
@@ -341,7 +343,6 @@ clipboard.on('success', function(e) {
 
 
 /* USER INFO FUNCTIONS */
-
 function getImageURL(storage,id,element){
     //console.info(id);
     var pathReference = storage.ref('userPhotos/'+id+'/profileImage.jpg');
@@ -365,10 +366,22 @@ function getUserInfo(db,id,profile){
             let objTemp = doc.data();
             objTemp.userId = id;
             loadUserInfo(objTemp,profile);
-            if (profile) getUserPosts(id);
+            if (!profile) getUserPosts(id);
             //return doc.data();
         } else {
             console.log("No such document!");
+            if(!profile){
+                 // doc.data() will be undefined in this case
+                 document.getElementById('spinner').remove(); //Remove spinner
+                 document.getElementById('cardContainerParent').textContent = 'This user had no posts yet.'; //Show message about this users does not have any post
+                 userDetails = {};
+                 userDetails.id=user.uid;
+                 newUser = true;
+                 toast('To activate your profile, please fill out all the field or at least the required ones(username)',5000,'profile updated');
+                 newProfileUpdate._element.getElementsByClassName('modal-header')[0].getElementsByTagName('button')[0].disabled = true;
+                 newProfileUpdate._element.getElementsByClassName('modal-footer')[0].getElementsByTagName('button')[0].disabled = true;
+                 newProfileUpdate.show();
+            }
         }            
     })
     .catch((error) => {
@@ -380,6 +393,7 @@ function loadUserInfo(obj,profile){
     let details = document.getElementById('detailsContainer');
     //console.log(details.children);
     userInfo = obj;
+    console.log(obj);
     for(let i=0;i<details.children.length;i++){
         //console.log(details.children[i]);
         switch (details.children[i].id) {
@@ -390,6 +404,7 @@ function loadUserInfo(obj,profile){
                     details.children[i].getElementsByTagName('a')[0].removeAttribute('href');
                 }
                 else{
+                    //console.log(userInfo);
                     details.children[i].getElementsByTagName('a')[0].href = 'u?id=' +  (userInfo.userId);
                 }
                 document.getElementsByTagName("title")[0].innerText=(obj.username || details.children[i].textContent) + "'s profile";

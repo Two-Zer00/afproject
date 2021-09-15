@@ -33,13 +33,13 @@ function createElement(id,obj){
                     <div class="d-flex w-100 h-100 justify-content-between">
                         <div>
                             <h5 class="mb-1 d-inline">${obj.title}</h5>
-                            ${(obj.nsfw==true)?'<p class="p-0 m-0 d-inline" style="font-size:10px;"><span class="badge rounded-pill bg-danger">NSFW</span></p>':''}
                         </div>
                         <div>
                             <small ${((daysAgo(obj.date)).indexOf("ago")!=-1) ? 'title="'+(new Date(obj.date)).toLocaleString()+'"' :""}>${daysAgo(obj.date)}</small>
                         </div>
                     </div>
-                    <p class="mb-1">${obj.desc}</p>
+                    <p class="m-0">${obj.desc}</p>
+                    ${(obj.nsfw==true)?'<p class="p-0 m-0 mb-1"><span class="badge rounded-pill bg-danger" style="font-size:8px;">NSFW</span></p>':''}
                     <small class="text-muted">${getUsernameFromId(obj.userId) || obj.userId}</small>
                 `;
     let parentElement = document.createElement('a');
