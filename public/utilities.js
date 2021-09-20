@@ -370,7 +370,7 @@ function getUserInfo(db,id,profile){
             //return doc.data();
         } else {
             console.log("No such document!");
-            if(!profile){
+            if(!profile && user() && user().userId === id){
                  // doc.data() will be undefined in this case
                  document.getElementById('spinner').remove(); //Remove spinner
                  document.getElementById('cardContainerParent').textContent = 'This user had no posts yet.'; //Show message about this users does not have any post
@@ -381,6 +381,11 @@ function getUserInfo(db,id,profile){
                  newProfileUpdate._element.getElementsByClassName('modal-header')[0].getElementsByTagName('button')[0].disabled = true;
                  newProfileUpdate._element.getElementsByClassName('modal-footer')[0].getElementsByTagName('button')[0].disabled = true;
                  newProfileUpdate.show();
+            }
+            else{
+                //document.getElementById('spinner').parentElement.innerText = 'USER NOT FOUND';
+                document.getElementById('spinner').remove(); //Remove spinner
+                toast('User id not found',5000,'logged out');
             }
         }            
     })

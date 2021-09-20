@@ -7,6 +7,11 @@ let volumen = document.getElementById("volumen");
 let player = document.getElementById('player').children;
 let checkVolume = document.getElementById('checkVolume');
 volumeCheck();
+let mediaMetada = new MediaMetadata({
+    title: "PROJECT A",
+    artist: "TWZ00",
+    artwork: [{src: "podcast.jpg"}]
+  });
 checkVolume.addEventListener('change',()=>{
     
     volumeCheck();
@@ -32,7 +37,6 @@ window.addEventListener('load',()=>{
                     document.getElementById('playBtn').classList.remove('disabled');
                     progresss.max = secToPorcentage(audio.duration,audio.duration);
                     document.getElementById("duration").textContent = ((audio.duration).toString()).toHHMMSS();
-                    
                 });
                 audio.addEventListener("timeupdate",()=>{
                     progresss.value = secToPorcentage(audio.currentTime,audio.duration);
@@ -41,17 +45,7 @@ window.addEventListener('load',()=>{
                 player.title.textContent = (doc.data()).title;
                 player.date.textContent = (new Date((doc.data()).date)).toLocaleDateString();
                 player.description.textContent = (doc.data()).desc;
-                // db.collection("user").doc(doc.data().userId)
-                //     .get()
-                //     .then((user) => {
-                //         userInfo = doc.data();
-                //         userInfo.userId = doc.data().userId;
-                //         loadUserInfo(user.data(),true);
-                //         getImageURL(storage,user.id,image);
-                //     })
-                //     .catch((error) => {
-                //         console.log("Error getting documents: ", error);
-                //     });
+                mediaMetada.title = player.title.textContent;
                 getUserInfo(db,doc.data().userId,true);
                 getImageURL(storage,doc.data().userId,image);
             } else {
@@ -71,6 +65,12 @@ image.addEventListener('load', function() {
     image.parentElement.style.backgroundColor = color;
     console.log(pickTextColorBasedOnBgColorAdvanced(color,'#FFFFFF','#000000'));
     document.getElementById('shareDots').style.color = pickTextColorBasedOnBgColorAdvanced(color,'#fff','#000');
+    mediaMetada.artist = userInfo.username;
+    mediaMetada.artwork = [{src:image.src}];
+    if ("mediaSession" in navigator){
+        navigator.mediaSession.metadata = mediaMetada;
+      }
+      
 });
 const audioContext = new AudioContext();
 audio.addEventListener('loadeddata',()=>{
