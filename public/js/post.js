@@ -82,8 +82,15 @@ audio.addEventListener('loadeddata',()=>{
     });
     progresss.classList.remove('pe-none');
     progresss.classList.remove('loadContainer');
+    updatePositionState();
 });
-
+function updatePositionState() {
+    navigator.mediaSession.setPositionState({
+      duration: audio.duration,
+      playbackRate: audio.playbackRate,
+      position: audio.currentTime
+    });
+}
 audio.addEventListener('seeking',()=>{
     progresss.classList.add('loadContainer');
 });
@@ -117,6 +124,7 @@ progresss.addEventListener("click",(event)=>{
     let rect = event.target.getBoundingClientRect();
     let x = event.clientX - rect.left; //x position within the element.
     audio.currentTime = porcentageToSecs(pixToPorcentage(x,progresss.offsetWidth),audio.duration) - audio.style.margin;
+    updatePositionState();
 });
 progresss.addEventListener("mousemove",(event)=>{
     let rect = event.target.getBoundingClientRect();

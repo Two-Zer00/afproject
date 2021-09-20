@@ -267,13 +267,6 @@ progress[value]::-webkit-progress-value {
   /* styles */
   background-color: var(--logo);
 }
-
-/* option button */
-
-.optionButton:hover {
-  box-shadow: 5px 10px #888888;
-}
-
 .loadContainer {
   background-image: linear-gradient(
     90deg,

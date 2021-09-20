@@ -7,7 +7,7 @@ let postUpdateFormModal = new bootstrap.Modal(document.getElementById('postOptio
 let newProfileUpdate = new bootstrap.Modal(document.getElementById('profileDetailsModal'),{keyboard:false,backdrop:'static'});
 let postInUse = '';
 let postElementInUse;
-var userValidate;
+var userValidate=false;
 let image = document.getElementById('profileImage');
 
 
@@ -37,33 +37,6 @@ window.addEventListener('load',()=>{
                 getUserInfo(db,user.uid,false);
                 getImageURL(storage,user.uid,image);
                 validateUser(true);
-                // db.collection("user").doc(user.uid)
-                // .get()
-                // .then((doc) => {
-                //     if (doc.exists) {
-                //         userInfo = doc.data();
-                //         userInfo.userId = user.uid;
-                //         loadUserInfo(doc.data(),false);
-                //         //getUserPosts(user.uid);
-                //         getImageURL(storage,user.uid,image);
-                //         validateUser(true);
-                //     } else {
-                //         // doc.data() will be undefined in this case
-                //         document.getElementById('spinner').remove(); //Remove spinner
-                //         document.getElementById('cardContainerParent').textContent = 'This user had no posts yet.'; //Show message about this users does not have any post
-                //         console.log("No such document!");
-                //         userDetails = {};
-                //         userDetails.id=user.uid;
-                //         newUser = true;
-                //         toast('To activate your profile, please fill out all the field or at least the required ones(username)',5000,'profile updated');
-                //         newProfileUpdate._element.getElementsByClassName('modal-header')[0].getElementsByTagName('button')[0].disabled = true;
-                //         newProfileUpdate._element.getElementsByClassName('modal-footer')[0].getElementsByTagName('button')[0].disabled = true;
-                //         newProfileUpdate.show();
-                //     }            
-                // })
-                // .catch((error) => {
-                //     console.log("Error getting documents: ", error);
-                // });
             }
         }
         else if(!id){
