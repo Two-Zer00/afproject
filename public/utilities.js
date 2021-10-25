@@ -79,18 +79,30 @@ myDropdown.addEventListener("show.bs.dropdown", function () {
   document.getElementById("dropdownMenuButton").classList.add("link-logo");
 });
 myDropdown.addEventListener("hide.bs.dropdown", function () {
-    
   document.getElementById("dropdownMenuButton").classList.remove("link-logo");
-  document.getElementById("dropdownMenuButton")
+  document
+    .getElementById("dropdownMenuButton")
     .classList.remove("bi-person-fill");
   document.getElementById("dropdownMenuButton").classList.add("link-dark");
   document.getElementById("dropdownMenuButton").classList.add("bi-person");
 });
 
 //Login using email and password
+var dropdownList = new bootstrap.Dropdown(
+  document.querySelector("#dropdownMenuButton")
+);
 function signIn(event) {
   event.preventDefault();
   const form = event.target.parentElement; //form
+  let spinner = document.createElement("span");
+  spinner.classList.add("spinner-border", "spinner-border-sm");
+  //let element = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+  // form.querySelector("button").textContent = "";
+  spinner.setAttribute("role", "status");
+  spinner.setAttribute("aria-hidden", "true");
+  form.querySelector("button").disabled = true;
+  form.querySelector("button").prepend(spinner);
+  form.parentElement.parentElement.style.cursor = "wait";
   console.log(form);
   if (form.checkValidity()) {
     auth
@@ -98,6 +110,10 @@ function signIn(event) {
       .then((userCredential) => {
         // Signed in
         var user = userCredential.user;
+        dropdownList.update();
+        spinner.remove();
+        form.parentElement.parentElement.style.cursor = "auto";
+        form.querySelector("button").disabled = false;
         toast("Welcome!", 3000, "logged");
       })
       .catch((error) => {
