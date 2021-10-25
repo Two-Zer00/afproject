@@ -257,7 +257,14 @@ progress[value] {
 progress::-moz-progress-bar {
   /* styles */
   background-color: var(--logo);
+  position: relative;
 }
+
+progress::-moz-progress-bar::after {
+  position: absolute;
+  width: 30px;
+}
+
 progress[value]::-webkit-progress-bar {
   background-color: #eee;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
@@ -292,4 +299,14 @@ progress[value]::-webkit-progress-value {
   100% {
     background-position: 0 50%;
   }
+}
+
+.link-logo {
+  color: var(--logo);
+}
+.link-logo:focus {
+  color: var(--logo);
+}
+.link-logo:hover {
+  color: var(--logo);
 }

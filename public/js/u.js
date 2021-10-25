@@ -22,6 +22,7 @@ window.addEventListener('load',()=>{
     //console.log(userInfo);
     if(id && id!='undefined'){
         getUserInfo(db,id,false);
+        //image.src = getImageURL(storage,id);
         getImageURL(storage,id,image);
     }
     firebase.auth().onAuthStateChanged(function(user) {
@@ -66,13 +67,13 @@ function getUserPosts(id){
         else{
             document.getElementById('cardContainerParent').textContent = 'This user had no posts yet.';
         }
-        document.getElementById('cardContainerParent').classList.remove('load');
+        //document.getElementById('cardContainerParent').classList.remove('load');
     })
     .catch((error) => {
         console.log("Error getting documents: ", error);
     });
 
-    document.getElementById('spinner').remove();
+    document.getElementById('spinner').classList.add('d-none');
 }
 
 function createElement(id,object){
@@ -204,17 +205,17 @@ function validateUser(val){
     }
 }
 function next(item){
-    console.log('scrolled to end');
+    document.getElementById('spinner').classList.add('d-none');
     if(last){
         query
         .startAfter(item)
         .get()
         .then((querySnapshot)=>{
             last = querySnapshot.docs[querySnapshot.docs.length-1];
-            //console.warn(querySnapshot.docs);
             querySnapshot.forEach((doc) => {
                 post.push(doc);
                 createElement(doc.id,doc.data());
+                document.getElementById('spinner').classList.remove('d-none');
             });
         });
     }
@@ -438,7 +439,7 @@ document.getElementById('saveProfileBtn').addEventListener('click',()=>{ //Profi
     }
 });
 
-window.addEventListener('scroll',()=>{ //Load next posts once you finish scroll
+window.addEventListener('scroll',()=>{ //Load next posts once finish scrolling
     var d = document.documentElement;
     var offset = d.scrollTop + window.innerHeight;
     var height = d.offsetHeight;
