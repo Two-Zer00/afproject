@@ -310,3 +310,10 @@ progress[value]::-webkit-progress-value {
 .link-logo:hover {
   color: var(--logo);
 }
+
+.primary-color {
+  color: var(--logo);
+}
+.primary-color-bg {
+  background: var(--logo);
+}

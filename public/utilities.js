@@ -346,6 +346,10 @@ function toast(text, time, type) {
       toastType = "bi bi-person-lines-fill";
       colorStatus = "success text-light";
       break;
+    case "email":
+      toastType = "bi bi-envelope";
+      colorStatus = "warning text-dark";
+      break;
   }
   let toastHTML = `<div class=\"toast align-items-center\" role=\"alert\" aria-live=\"assertive\" aria-atomic=\"true\" > 
         <div class=\"fs-6\">
