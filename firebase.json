@@ -17,6 +17,10 @@
         "destination": "/index.html"
       },
       {
+        "source": "/emailRedirect",
+        "destination": "/emailsHandler.html"
+      },
+      {
         "source": "/u",
         "destination": "/u.html"
       },
