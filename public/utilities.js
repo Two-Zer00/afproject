@@ -382,9 +382,12 @@ clipboard.on("success", function (e) {
 /* USER INFO FUNCTIONS */
 async function getImageURL(storage, id, element) {
   //console.info(id);
-  var pathReference = await storage
-    .ref("userPhotos/" + id + "/profileImage.jpg")
-    .getDownloadURL();
+  var pathReference = "/staticFiles/profileImageDefault.png";
+  try {
+    pathReference = await storage
+      .ref("userPhotos/" + id + "/profileImage.jpg")
+      .getDownloadURL();
+  } catch (error) {}
   //console.log(pathReference);
   element.src = pathReference;
 

@@ -1,3 +1,4 @@
+var auth;
 window.addEventListener(
   "load",
   () => {
@@ -19,7 +20,7 @@ window.addEventListener(
     //   // snippet found in the Firebase console.
     // // };
     // var app = firebase.initializeApp(config);
-    var auth = firebase.auth();
+    auth = firebase.auth();
 
     // Handle the user management action.
     switch (mode) {
