@@ -117,12 +117,20 @@ function signIn(event) {
         toast("Welcome!", 3000, "logged");
       })
       .catch((error) => {
+        dropdownList.update();
+        spinner.remove();
+        form.parentElement.parentElement.style.cursor = "auto";
+        form.querySelector("button").disabled = false;
         var errorCode = error.code;
         var errorMessage = error.message;
         console.log(error);
         toast(error.message, 5000, "logged out");
       });
   } else {
+    dropdownList.update();
+    spinner.remove();
+    form.parentElement.parentElement.style.cursor = "auto";
+    form.querySelector("button").disabled = false;
     form.reportValidity();
   }
 }
