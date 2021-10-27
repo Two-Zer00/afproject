@@ -33,6 +33,9 @@ window.addEventListener(
         break;
       case "verifyEmail":
         // Display email verification handler and UI.
+        document.getElementById(
+          "message"
+        ).textContent = `Verifying your email adress.`;
         handleVerifyEmail(auth, actionCode, continueUrl, lang);
         break;
       default:
@@ -47,28 +50,52 @@ function getParameterByName(name) {
   return searchParams.get(name);
 }
 
+function checkUser() {
+  return auth.currentUser;
+}
+
 function handleVerifyEmail(auth, actionCode, continueUrl, lang) {
   // Localize the UI to the selected language as determined by the lang
   // parameter.
   // Try to apply the email verification code.
-  auth
-    .applyActionCode(actionCode)
-    .then((resp) => {
-      // Email address has been verified.
-      // TODO: Display a confirmation message to the user.
-      // You could also provide the user with a link back to the app.
-      // TODO: If a continue URL is available, display a button which on
-      // click redirects the user back to the app via continueUrl with
-      // additional state determined from that URL's parameters.
-      document.getElementById("spinner").remove();
-      document.getElementById(
-        "message"
-      ).textContent = `Email verification run succesfully. <a href='/'>Home</a>`;
-    })
-    .catch((error) => {
-      document.getElementById("spinner").remove();
-      document.getElementById(
-        "message"
-      ).textContent = `Email verification have errors, please try again. <a href='/u'>Profile</a>`;
-    });
+  if (checkUser()) {
+    auth
+      .applyActionCode(actionCode)
+      .then((resp) => {
+        // Email address has been verified.
+        // TODO: Display a confirmation message to the user.
+        // You could also provide the user with a link back to the app.
+        // TODO: If a continue URL is available, display a button which on
+        // click redirects the user back to the app via continueUrl with
+        // additional state determined from that URL's parameters.
+        document.getElementById("spinner").remove();
+        document.getElementById(
+          "message"
+        ).textContent = `Email verification run succesfully.`;
+        let element = document.createElement("a");
+        element.href = "/u";
+        element.textContent = "Profile";
+        document.getElementById("message").appendChild(element);
+        let db = firebase.database();
+        db.collection("user")
+          .doc(auth.currentUser.uid)
+          .update({ emailVerify: true })
+          .then(() => {
+            console.log("everything work fine");
+          })
+          .catch((error) => {
+            console.error("Error writing document: ", error);
+          });
+      })
+      .catch((error) => {
+        document.getElementById("spinner").remove();
+        document.getElementById(
+          "message"
+        ).textContent = `Email verification have errors, please try again.`;
+        let element = document.createElement("a");
+        element.href = "/u";
+        element.textContent = "Profile";
+        document.getElementById("message").appendChild(element);
+      });
+  }
 }
