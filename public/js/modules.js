@@ -93,3 +93,5 @@ const uploadFloatButton =
   "</div>";
 
 const requestForm = '<button class="btn btn-secondary">request</button>';
+
+const emailVerify = '<span class="bi bi-patch-check"></span>';

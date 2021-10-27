@@ -317,3 +317,6 @@ progress[value]::-webkit-progress-value {
 .primary-color-bg {
   background: var(--logo);
 }
+.dropdown-item:active {
+  background-color: var(--logo);
+}

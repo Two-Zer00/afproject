@@ -462,6 +462,13 @@ function loadUserInfo(obj, profile) {
       case "profileDetailsUsername":
         details.children[i].getElementsByTagName("a")[0].textContent =
           obj.username || details.children[i].textContent;
+
+        if (userInfo.verify) {
+          let verify = document.createElement("span");
+          verify.classList.add("bi", "bi-patch-check", "fs-5");
+          verify.color = "var(--logo)";
+          details.children[i].appendChild(verify);
+        }
         //console.log(profile);
         if (!profile) {
           details.children[i]

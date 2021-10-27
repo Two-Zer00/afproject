@@ -517,7 +517,7 @@ document.getElementById("saveProfileBtn").addEventListener("click", () => {
       .doc(user().uid)
       .set(obj)
       .then(() => {
-        loadUserDetails(obj);
+        loadUserInfo(obj);
         userInfo = obj;
         userInfo.userId = user().uid;
         console.warn(obj);
