@@ -1,5 +1,6 @@
 //var auth;
 let db;
+let myModal;
 window.addEventListener(
   "load",
   () => {
@@ -26,10 +27,41 @@ window.addEventListener(
     // user = firebase.auth().currentUser.uid;
     console.log(auth);
     // Handle the user management action.
+    let modal = `
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <form class="m-3" id="reset">
+              <h2 class="">New password</h2>
+              <div class="form-floating my-3">
+                  <input type="password" class="form-control" id="password" placeholder="Password">
+                  <label for="floatingPassword">New password</label>
+              </div>
+              <div class="form-floating my-3">
+                <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+                <label for="floatingPassword">Confirm password</label>
+              </div>
+              <button type="submit" class="btn btn-primary">Reset password</button>
+            </form>
+          </div>
+        </div>
+      `;
+    let modalContainer = document.createElement("div");
+    modalContainer.classList.add("modal", "fade");
+    modalContainer.id = "passwordModalContainer";
+    modalContainer.tabIndex = -1;
+    modalContainer.setAttribute(
+      "aria-labelledby",
+      "passwordModalContainerLabel"
+    );
+    modalContainer.setAttribute("aria-hidden", "true");
+    modalContainer.innerHTML = modal;
+    myModal = new bootstrap.Modal(modalContainer, {});
+    document.getElementById("reset");
+    myModal.show();
     switch (mode) {
       case "resetPassword":
         // Display reset password handler and UI.
-        handleResetPassword(auth, actionCode, continueUrl, lang);
+        //handleResetPassword(auth, actionCode, continueUrl, lang);
         break;
       case "recoverEmail":
         // Display email recovery handler and UI.
@@ -56,6 +88,43 @@ function getParameterByName(name) {
 
 function checkUser() {
   return auth.currentUser;
+}
+
+function handleResetPassword(auth, actionCode, continueUrl, lang) {
+  // Localize the UI to the selected language as determined by the lang
+  // parameter.
+
+  // Verify the password reset code is valid.
+  auth
+    .verifyPasswordResetCode(actionCode)
+    .then((email) => {
+      var accountEmail = email;
+
+      // TODO: Show the reset screen with the user's email and ask the user for
+      // the new password.
+      var newPassword = "...";
+
+      // Save the new password.
+      auth
+        .confirmPasswordReset(actionCode, newPassword)
+        .then((resp) => {
+          // Password reset has been confirmed and new password updated.
+          // TODO: Display a link back to the app, or sign-in the user directly
+          // if the page belongs to the same domain as the app:
+          // auth.signInWithEmailAndPassword(accountEmail, newPassword);
+          // TODO: If a continue URL is available, display a button which on
+          // click redirects the user back to the app via continueUrl with
+          // additional state determined from that URL's parameters.
+        })
+        .catch((error) => {
+          // Error occurred during confirmation. The code might have expired or the
+          // password is too weak.
+        });
+    })
+    .catch((error) => {
+      // Invalid or expired action code. Ask user to try to reset the password
+      // again.
+    });
 }
 
 function handleVerifyEmail(auth, actionCode, continueUrl, lang) {

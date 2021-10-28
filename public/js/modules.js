@@ -6,7 +6,7 @@ const menuActions =
   "</div>";
 const loginForm =
   '<div id="formLogin">' +
-  '<form class="px-4 pt-3" id="loginForm" style="width: 260px;">' +
+  '<form class="px-4 pt-3" id="loginForm">' +
   '<div class="mb-3">' +
   '<label for="exampleDropdownFormEmail1" class="form-label">Email address</label>' +
   '<input type="email" class="form-control" id="email" placeholder="email@example.com" required>' +
@@ -34,8 +34,8 @@ const menuHTML =
   '<img src="/staticFiles/aproject.svg" tabindex="-1" alt="logo" class="user-selection-none" style="width:100%;">' +
   "</li>" +
   '<li class="nav-item" id="myDropdown">' +
-  '<a class="nav-link bi bi-person link-dark" id="dropdownMenuButton" style="line-height:1.75rem;height:100%;" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" href="#"></a>' +
-  '<div class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="dropdownMenuButton" id="dropdown">' +
+  '<a class="nav-link bi bi-person link-dark" id="dropdownMenuButton" style="line-height:1.75rem;height:100%;" data-bs-toggle="dropdown" data-bs-auto-close="outside" data-bs-reference="parent" aria-expanded="false" href="#"></a>' +
+  '<div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton" id="dropdown">' +
   loginForm +
   "</div>" +
   "</li>" +
