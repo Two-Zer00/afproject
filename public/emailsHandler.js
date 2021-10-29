@@ -1,20 +1,18 @@
-//var auth;
+let auth;
 let db;
 let myModal;
+// Get the action to complete.
+let mode = getParameterByName("mode");
+// Get the one-time code from the query parameter.
+let actionCode = getParameterByName("oobCode");
+// (Optional) Get the continue URL from the query parameter if available.
+let continueUrl = getParameterByName("continueUrl");
+// (Optional) Get the language code if available.
+let lang = getParameterByName("lang") || "en";
+
 window.addEventListener(
   "load",
   () => {
-    // TODO: Implement getParameterByName()
-
-    // Get the action to complete.
-    var mode = getParameterByName("mode");
-    // Get the one-time code from the query parameter.
-    var actionCode = getParameterByName("oobCode");
-    // (Optional) Get the continue URL from the query parameter if available.
-    var continueUrl = getParameterByName("continueUrl");
-    // (Optional) Get the language code if available.
-    var lang = getParameterByName("lang") || "en";
-
     // Configure the Firebase SDK.
     // This is the minimum configuration required for the API to be used.
     // var config = {
@@ -22,7 +20,7 @@ window.addEventListener(
     //   // snippet found in the Firebase console.
     // // };
     // var app = firebase.initializeApp(config);
-    let auth = firebase.auth();
+    auth = firebase.auth();
     db = firebase.firestore();
     // user = firebase.auth().currentUser.uid;
     console.log(auth);
@@ -31,16 +29,19 @@ window.addEventListener(
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <form class="m-3" id="reset">
-              <h2 class="">New password</h2>
+              <h2>New password</h2>
               <div class="form-floating my-3">
                   <input type="password" class="form-control" id="password" placeholder="Password">
                   <label for="floatingPassword">New password</label>
               </div>
               <div class="form-floating my-3">
-                <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+                <input type="password" class="form-control" id="confirmPassword" placeholder="Password">
                 <label for="floatingPassword">Confirm password</label>
               </div>
-              <button type="submit" class="btn btn-primary">Reset password</button>
+              <button type="submit" class="btn btn-primary" onclick="getPassword(event)">Reset password</button>
+              <div class="invalid-feedback">
+                Passwords does not match.
+              </div>
             </form>
           </div>
         </div>
@@ -57,11 +58,11 @@ window.addEventListener(
     modalContainer.innerHTML = modal;
     myModal = new bootstrap.Modal(modalContainer, {});
     document.getElementById("reset");
-    myModal.show();
     switch (mode) {
       case "resetPassword":
         // Display reset password handler and UI.
         //handleResetPassword(auth, actionCode, continueUrl, lang);
+        myModal.show();
         break;
       case "recoverEmail":
         // Display email recovery handler and UI.
@@ -90,6 +91,20 @@ function checkUser() {
   return auth.currentUser;
 }
 
+function getPassword(event) {
+  event.preventDefault();
+  const form = event.target.parentElement; //form\
+  console.log(form.password.value, form.confirmPassword.value);
+  if (form.password.value != form.confirmPassword.value) {
+    console.error("not equals");
+    form.password.setCustomValidity("Password must be same");
+    form.reportValidity();
+  } else {
+    newPassword = form.password.value;
+    handleResetPassword(auth, actionCode, continueUrl, lang);
+  }
+}
+var newPassword;
 function handleResetPassword(auth, actionCode, continueUrl, lang) {
   // Localize the UI to the selected language as determined by the lang
   // parameter.
@@ -102,7 +117,7 @@ function handleResetPassword(auth, actionCode, continueUrl, lang) {
 
       // TODO: Show the reset screen with the user's email and ask the user for
       // the new password.
-      var newPassword = "...";
+      //newPassword = "...";
 
       // Save the new password.
       auth
@@ -115,6 +130,16 @@ function handleResetPassword(auth, actionCode, continueUrl, lang) {
           // TODO: If a continue URL is available, display a button which on
           // click redirects the user back to the app via continueUrl with
           // additional state determined from that URL's parameters.
+          myModal.hide();
+          console.log(resp);
+          document.getElementById("spinner").remove();
+          document.getElementById(
+            "message"
+          ).textContent = `Password reset complited.`;
+          let element = document.createElement("a");
+          element.href = "/u";
+          element.textContent = "Profile";
+          document.getElementById("message").appendChild(element);
         })
         .catch((error) => {
           // Error occurred during confirmation. The code might have expired or the

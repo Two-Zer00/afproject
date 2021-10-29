@@ -9,7 +9,7 @@ let userInfo = {};
 let uploadBtn;
 let clipboard = new ClipboardJS(".copyLink");
 document.getElementById("stickyMenu").innerHTML = menuHTML;
-document.getElementById("stickyMenu").classList.add("sticky-top");
+//document.getElementById("stickyMenu").classList.add("sticky-top");/
 
 window.addEventListener("load", () => {
   db = firebase.firestore();
@@ -46,15 +46,53 @@ function user() {
 //fill the menu profile options and show depends on Auth firebase object
 function menuOptions(user) {
   let navAction = document.querySelector("#dropdown");
+  console.log(navAction.children);
   if (user) {
-    navAction.children.formLogin.remove();
-    navAction.innerHTML = menuActions;
+    //console.log(navAction.children);
+    navAction.children[0].children[0].remove();
+    navAction.children[0].innerHTML = menuActions;
   } else {
     if (navAction.children.menuActions) {
       navAction.children.menuActions.remove();
     }
-    navAction.innerHTML = loginForm;
+    //console.log(navAction.children[0]);
+    navAction.children[0].innerHTML = loginForm;
   }
+}
+
+//RESET PASSWORD
+
+function resetPass() {
+  let loginContainer = document.getElementById("dropdown").children[0];
+  // console.log(loginContainer.children);
+  let loginForm = loginContainer.children.loginFormContainer;
+  loginForm.classList.add("d-none");
+  loginContainer.innerHTML = resetPasswordForm;
+  dropdownList.update();
+}
+
+function resetPassword(event) {
+  event.preventDefault();
+  const form = event.target.parentElement; //form
+  firebase
+    .auth()
+    .sendPasswordResetEmail(form.email.value)
+    .then(() => {
+      toast("Email send, please check your spam inbox", 3000, "email");
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      toast(errorMessage + ", try again", 3000, "email");
+    });
+}
+
+function loginContainer() {
+  let loginContainer = document.getElementById("dropdown").children[0];
+  let login = loginContainer.children.resetPassFormContainer;
+  login.classList.add("d-none");
+  loginContainer.innerHTML = loginForm;
+  dropdownList.update();
 }
 
 //Logout function, logout user.
@@ -63,6 +101,7 @@ function logout() {
     .auth()
     .signOut()
     .then(() => {
+      dropdownList.update();
       toast("Succesfully logged out", 1000, "logged out");
     })
     .catch((error) => {

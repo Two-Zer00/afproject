@@ -320,3 +320,8 @@ progress[value]::-webkit-progress-value {
 .dropdown-item:active {
   background-color: var(--logo);
 }
+
+.nav .bi::before {
+  line-height: unset;
+  font-size: 2rem;
+}

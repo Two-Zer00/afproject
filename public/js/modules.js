@@ -1,11 +1,25 @@
+const logoPath = "/staticFiles/aproject.svg";
 const menuActions =
   '<div id="menuActions">' +
   '<a class="dropdown-item" href="/u">My profile</a>' +
   '<a class="dropdown-item d-none d-sm-none d-md-none d-lg-block d-xl-block" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#uploadModal">Upload</a>' +
   '<a class="dropdown-item" href="javascript:void(0)" onclick="logout()">Sign out</a>' +
   "</div>";
+const resetPasswordForm = `
+  <div id="resetPassFormContainer">
+    <form id="resetPassword" class="px-4 pt-3 pb-2">
+    <div class="form-text">You will recive an email to continue with the process.</div>
+    <div class="form-floating mb-3 mt-1">
+      <input type="email" class="form-control" id="email" placeholder="name@example.com">
+      <label for="floatingInput">Email address</label>
+    </div>
+    <button type="submit" class="btn btn-outline-dark" onclick="resetPassword(event)">Send email</button>
+    </form>
+    <a class="dropdown-item" href="#" id="signUp" onclick="loginContainer()">Already have account? Sign in</a>
+  </div>
+`;
 const loginForm =
-  '<div id="formLogin">' +
+  '<div id="loginFormContainer">' +
   '<form class="px-4 pt-3" id="loginForm">' +
   '<div class="mb-3">' +
   '<label for="exampleDropdownFormEmail1" class="form-label">Email address</label>' +
@@ -23,24 +37,43 @@ const loginForm =
   "</form>" +
   '<div class="dropdown-divider"></div>' +
   '<a class="dropdown-item" href="/login" id="signUp">New around here? Sign up</a>' +
+  '<a class="dropdown-item" href="#" onclick="resetPass()" id="signUp">Forgot password? Reset</a>' +
   "</div>";
-const menuHTML =
-  '<div class="bg-white shadow-sm container-xl">' +
-  '<ul class="nav justify-content-center fs-3">' +
-  '<li class="nav-item">' +
-  '<a class="nav-link bi bi-house link-dark" style="line-height:1.75rem; height:100%;" href="/"></a>' +
-  "</li>" +
-  '<li class="nav-item d-flex align-items-center bg-logo rounded-circle p-2 my-1" style="width: 45px; height:45px;">' +
-  '<img src="/staticFiles/aproject.svg" tabindex="-1" alt="logo" class="user-selection-none" style="width:100%;">' +
-  "</li>" +
-  '<li class="nav-item" id="myDropdown">' +
-  '<a class="nav-link bi bi-person link-dark" id="dropdownMenuButton" style="line-height:1.75rem;height:100%;" data-bs-toggle="dropdown" data-bs-auto-close="outside" data-bs-reference="parent" aria-expanded="false" href="#"></a>' +
-  '<div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton" id="dropdown">' +
-  loginForm +
-  "</div>" +
-  "</li>" +
-  "</ul>" +
-  "</div>";
+// const menuHTML =
+//   '<div class="bg-white shadow-sm container-xl">' +
+//   '<ul class="nav justify-content-center fs-3">' +
+//   '<li class="nav-item">' +
+//   '<a class="nav-link bi bi-house link-dark" style="line-height:1.75rem; height:100%;" href="/"></a>' +
+//   "</li>" +
+//   '<li class="nav-item d-flex align-items-center bg-logo rounded-circle p-2 my-1" style="width: 45px; height:45px;">' +
+//   '<img src="/staticFiles/aproject.svg" tabindex="-1" alt="logo" class="user-selection-none" style="width:100%;">' +
+//   "</li>" +
+//   '<li class="nav-item" id="myDropdown">' +
+//   '<a class="nav-link bi bi-person link-dark" id="dropdownMenuButton" style="line-height:1.75rem;height:100%;" data-bs-toggle="dropdown" data-bs-auto-close="outside" data-bs-reference="parent" aria-expanded="false" href="#"></a>' +
+//   '<div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton" id="dropdown">' +
+//   '<div id="loginContainer"><div>';
+// "</div>" + "</li>" + "</ul>" + "</div>";
+
+const menuHTML = `
+<div class="bg-white shadow-sm container-xl">
+  <ul class="nav justify-content-center fs-3">
+    <li class="nav-item">
+      <a class="nav-link bi bi-house link-dark h-100" href="/"></a>
+    </li>
+    <li class="nav-item overflow-hidden d-flex align-items-center">
+      <div class="bg-logo rounded-circle">
+        <img src="${logoPath}" tabindex="-1" alt="logo" class="user-selection-none p-2" height="50" width="50"/>
+      </div>
+    </li>
+    <li class="nav-item" id="myDropdown">
+      <a class="nav-link bi bi-person link-dark h-100" id="dropdownMenuButton" data-bs-toggle="dropdown" data-bs-auto-close="outside" data-bs-reference="parent" aria-expanded="false" href="#"></a>
+      <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton" id="dropdown">
+        <div class="loginContainer"></div>
+      </div>
+    </li>
+  </ul>
+</div>
+`;
 const uploadHTML =
   '<div class="modal fade" id="uploadModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="uploadModal" aria-hidden="true">' +
   '<div class="modal-dialog modal-dialog-centered modal-fullscreen-lg-down">' +
