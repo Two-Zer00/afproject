@@ -45,18 +45,18 @@ function user() {
 
 //fill the menu profile options and show depends on Auth firebase object
 function menuOptions(user) {
-  let navAction = document.querySelector("#dropdown");
-  console.log(navAction.children);
+  let loginDropdown = document.getElementById("loginContainer");
+  //let navAction = document.querySelector("#dropdown");
+  //console.log(navAction.children);
   if (user) {
-    //console.log(navAction.children);
-    navAction.children[0].children[0].remove();
-    navAction.children[0].innerHTML = menuActions;
+    //loginDropdown.children.loginFormContainer.remove();
+    loginDropdown.innerHTML = menuActions;
   } else {
-    if (navAction.children.menuActions) {
-      navAction.children.menuActions.remove();
+    if (loginDropdown.children.menuActions) {
+      loginDropdown.children.menuActions.remove();
     }
-    //console.log(navAction.children[0]);
-    navAction.children[0].innerHTML = loginForm;
+    //console.log(loginDropdown.children[0]);
+    loginDropdown.innerHTML = loginForm;
   }
 }
 

@@ -39,21 +39,6 @@ const loginForm =
   '<a class="dropdown-item" href="/login" id="signUp">New around here? Sign up</a>' +
   '<a class="dropdown-item" href="#" onclick="resetPass()" id="signUp">Forgot password? Reset</a>' +
   "</div>";
-// const menuHTML =
-//   '<div class="bg-white shadow-sm container-xl">' +
-//   '<ul class="nav justify-content-center fs-3">' +
-//   '<li class="nav-item">' +
-//   '<a class="nav-link bi bi-house link-dark" style="line-height:1.75rem; height:100%;" href="/"></a>' +
-//   "</li>" +
-//   '<li class="nav-item d-flex align-items-center bg-logo rounded-circle p-2 my-1" style="width: 45px; height:45px;">' +
-//   '<img src="/staticFiles/aproject.svg" tabindex="-1" alt="logo" class="user-selection-none" style="width:100%;">' +
-//   "</li>" +
-//   '<li class="nav-item" id="myDropdown">' +
-//   '<a class="nav-link bi bi-person link-dark" id="dropdownMenuButton" style="line-height:1.75rem;height:100%;" data-bs-toggle="dropdown" data-bs-auto-close="outside" data-bs-reference="parent" aria-expanded="false" href="#"></a>' +
-//   '<div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton" id="dropdown">' +
-//   '<div id="loginContainer"><div>';
-// "</div>" + "</li>" + "</ul>" + "</div>";
-
 const menuHTML = `
 <div class="bg-white shadow-sm container-xl">
   <ul class="nav justify-content-center fs-3">
@@ -68,7 +53,7 @@ const menuHTML = `
     <li class="nav-item" id="myDropdown">
       <a class="nav-link bi bi-person link-dark h-100" id="dropdownMenuButton" data-bs-toggle="dropdown" data-bs-auto-close="outside" data-bs-reference="parent" aria-expanded="false" href="#"></a>
       <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton" id="dropdown">
-        <div class="loginContainer"></div>
+        <div id="loginContainer"></div>
       </div>
     </li>
   </ul>
