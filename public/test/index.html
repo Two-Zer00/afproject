@@ -1,34 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TEST FILE</title>
-    <link rel="stylesheet" href="../css/styles.css">
-</head>
-<body>
-  <div class="toastContainer position-absolute p-3 bottom-0 start-50 translate-middle-x">
-    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-      <div class="toast-header">
-        <img src="..." class="rounded me-2" alt="...">
-        <strong class="me-auto">Bootstrap</strong>
-        <small>11 mins ago</small>
-        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-      </div>
-      <div class="toast-body">
-        Hello, world! This is a toast message.
-      </div>
-    </div>
-  </div>
 
-  <img src="../staticFiles/aproject.svg" alt="aprojectLogo" style="color: aqua;">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TEST FILE</title>
+  <link rel="stylesheet" href="../css/styles.css">
+
+  <script defer src="/__/firebase/8.3.1/firebase-app.js"></script>
+  <script defer src="/__/firebase/8.3.1/firebase-firestore.js"></script>
+
+  <script defer src="/__/firebase/init.js"></script>
+</head>
+
+<body>
+  <label for="exampleDataList" class="form-label">Datalist example</label>
+  <input class="form-control" list="datalistOptions" id="exampleDataList" placeholder="Type to search...">
+  <datalist id="datalistOptions">
+    <option value="San Francisco">1</option>
+    <option value="New York">
+    <option value="Seattle">
+    <option value="Los Angeles">
+    <option value="Chicago">
+  </datalist>
+  <div class="form-text" id="genres"></div>
+
   <script>
-    var toastElList = [].slice.call(document.querySelectorAll('.toast'))
-    var toast = new bootstrap.Toast(toastElList[0])
-    toast.show();
+    window.addEventListener('load', async () => {
+      let db = firebase.firestore();
+      let results = await db.collection('genre').get();
+
+      // console.log(results.docs[0].data());
+
+      results.docs.forEach(element => {
+        console.log(element.id, element.data());
+        let option = document.createElement('option');
+        option.value = element.id;
+        option.textContent = element.data().name;
+        document.getElementById('datalistOptions').appendChild(option);
+      });
+
+    });
+    let genres = [];
+    document.getElementById('exampleDataList').addEventListener('change', (event) => {
+      let value = event.target.value
+      genres.push(value);
+      document.getElementById('genres').textContent += value + ', ';
+    });
 
   </script>
 </body>
+
 </html>

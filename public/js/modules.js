@@ -41,17 +41,17 @@ const loginForm =
   "</div>";
 const menuHTML = `
 <div class="bg-white shadow-sm container-xl">
-  <ul class="nav justify-content-center fs-3">
+  <ul class="nav justify-content-center fs-2">
     <li class="nav-item">
-      <a class="nav-link bi bi-house link-dark h-100" href="/"></a>
+      <a class="nav-link bi bi-house link-dark lh-sm" href="/"></a>
     </li>
-    <li class="nav-item overflow-hidden d-flex align-items-center">
-      <div class="bg-logo rounded-circle">
-        <img src="${logoPath}" tabindex="-1" alt="logo" class="user-selection-none p-2" height="50" width="50"/>
-      </div>
+    <li class="nav-item">
+      <a class="nav-link pe-none user-selection-none my-1 p-2 lh-1 bg-logo rounded-circle">
+        <span class="icon-main-logo align-middle fs-1 d-block logo"></span>
+      </a>
     </li>
     <li class="nav-item" id="myDropdown">
-      <a class="nav-link bi bi-person link-dark h-100" id="dropdownMenuButton" data-bs-toggle="dropdown" data-bs-auto-close="outside" data-bs-reference="parent" aria-expanded="false" href="#"></a>
+      <a class="nav-link bi bi-person link-dark lh-sm" id="dropdownMenuButton" data-bs-toggle="dropdown" data-bs-auto-close="outside" data-bs-reference="parent" aria-expanded="false" href="#"></a>
       <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton" id="dropdown">
         <div id="loginContainer"></div>
       </div>
