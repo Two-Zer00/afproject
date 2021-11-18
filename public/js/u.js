@@ -448,6 +448,7 @@ function uploadPost() {
       spinner.remove();
       postUpdateFormModal.hide();
       form.remove();
+      toast("Post updated", 2000, "update");
     })
     .catch((error) => {
       // The document probably doesn't exist.
@@ -479,6 +480,7 @@ function deletePost(id, date, filename) {
           postElementInUse.parentElement.remove();
           spinner.remove();
           postUpdateFormModal.hide();
+          toast("Post removed", 2000, "remove");
         })
         .catch((error) => {
           console.error("Error removing document: ", error);
@@ -494,6 +496,7 @@ function deletePost(id, date, filename) {
             //console.log("Document successfully deleted!");
             postElementInUse.parentElement.remove();
             postUpdateFormModal.hide();
+            toast("post removed", 2000, "remove");
           })
           .catch((error) => {
             console.error("Error removing document: ", error);

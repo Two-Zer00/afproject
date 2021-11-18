@@ -312,3 +312,12 @@ progress[value]::-webkit-progress-value {
 progress {
   background: rgba(255, 255, 255, 0.21);
 }
+/* .shadow {
+  box-shadow: 0 0.5rem 1rem rgba(255, 255, 255, 0.15);
+}
+.shadow-sm {
+  box-shadow: 0 0.125rem 0.25rem rgba(255, 255, 255, 0.075);
+}
+.shadow-lg {
+  box-shadow: 0 1rem 3rem rgba(255, 255, 255, 0.175);
+} */

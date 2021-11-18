@@ -397,6 +397,14 @@ function toast(text, time, type) {
       toastType = "bi bi-envelope";
       colorStatus = "warning text-dark";
       break;
+    case "remove":
+      toastType = "bi bi-file-x-fill";
+      colorStatus = "danger text-light";
+      break;
+    case "update":
+      toastType = "bi bi-file-text-fill";
+      colorStatus = "logo text-light";
+      break;
   }
   let toastHTML = `<div class=\"toast align-items-center\" role=\"alert\" aria-live=\"assertive\" aria-atomic=\"true\" > 
         <div class=\"fs-6\">
@@ -406,7 +414,7 @@ function toast(text, time, type) {
                 <div class=\"col d-flex align-items-center\">
                     ${text}
                 </div>
-                <div class=\"col-auto d-flex align-items-center border-start\">
+                <div class=\"col-auto d-flex align-items-center border-start border-dark\">
                     <a class=\"me-2 text-decoration-none link-dark fw-bolder\" data-bs-dismiss=\"toast\" aria-label=\"Close\" href=\"javascript:void(0)\">Dismiss</a>
                 </div>
             </div>
