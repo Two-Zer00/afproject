@@ -74,7 +74,8 @@ function createElementUser(obj) {
   let element = document.createElement("a");
   let verification = document.createElement("span");
   if (obj.verify) {
-    verification.classList.add("bi", "bi-patch-check");
+    verification.classList.add("bi", "bi-patch-check", "text-logo");
+    verification.title = verifedProfile;
   }
   element.href = "u?id=" + obj.id;
   element.textContent = obj.username;

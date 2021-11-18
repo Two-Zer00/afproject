@@ -113,7 +113,7 @@ function logout() {
 var myDropdown = document.getElementById("myDropdown");
 myDropdown.addEventListener("show.bs.dropdown", function () {
   document.getElementById("dropdownMenuButton").classList.remove("bi-person");
-  document.getElementById("dropdownMenuButton").classList.remove("link-dark");
+  document.getElementById("dropdownMenuButton").classList.remove("link-light");
   document.getElementById("dropdownMenuButton").classList.add("bi-person-fill");
   document.getElementById("dropdownMenuButton").classList.add("link-logo");
 });
@@ -122,7 +122,7 @@ myDropdown.addEventListener("hide.bs.dropdown", function () {
   document
     .getElementById("dropdownMenuButton")
     .classList.remove("bi-person-fill");
-  document.getElementById("dropdownMenuButton").classList.add("link-dark");
+  document.getElementById("dropdownMenuButton").classList.add("link-light");
   document.getElementById("dropdownMenuButton").classList.add("bi-person");
 });
 
@@ -512,8 +512,14 @@ function loadUserInfo(obj, profile) {
 
         if (userInfo.verify) {
           let verify = document.createElement("span");
-          verify.classList.add("bi", "bi-patch-check", "fs-5");
+          verify.classList.add(
+            "bi",
+            "bi-patch-check-fill",
+            "fs-5",
+            "text-logo"
+          );
           verify.color = "var(--logo)";
+          verify.title = verifedProfile;
           details.children[i].appendChild(verify);
         }
         //console.log(profile);

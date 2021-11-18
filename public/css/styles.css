@@ -122,7 +122,7 @@ input[type="range"]:focus::-webkit-slider-thumb {
 */
 
 :root {
-  --logo: #ac1111;
+  --logo: #8e02b1;
 }
 .center {
   height: 100vh;
@@ -147,50 +147,6 @@ input[type="range"]:focus::-webkit-slider-thumb {
 
 #volume::-moz-range-thumb {
   background: #525252;
-}
-/* The loading Class */
-.loading {
-  position: relative;
-  background-color: #3d3d3d52;
-}
-
-.loading text {
-  visibility: hidden;
-}
-
-/* The moving element */
-.loading::after {
-  display: block;
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  transform: translateX(-100%);
-  background: -webkit-gradient(
-    linear,
-    left top,
-    right top,
-    from(transparent),
-    color-stop(rgba(255, 255, 255, 0.2)),
-    to(transparent)
-  );
-
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
-
-  /* Adding animation */
-  animation: loading 0.8s infinite;
-}
-
-/* Loading Animation */
-@keyframes loading {
-  100% {
-    transform: translateX(100%);
-  }
 }
 
 .default {
@@ -252,7 +208,7 @@ progress[value] {
   /* Reset the default appearance */
   -webkit-appearance: none;
   appearance: none;
-  height: 30px;
+  height: 15px;
 }
 
 progress::-moz-progress-bar {
@@ -302,6 +258,10 @@ progress[value]::-webkit-progress-value {
   }
 }
 
+.text-logo {
+  color: var(--logo);
+}
+
 .link-logo {
   color: var(--logo);
 }
@@ -319,7 +279,7 @@ progress[value]::-webkit-progress-value {
   background: var(--logo);
 }
 .dropdown-item:active {
-  background-color: var(--logo);
+  background-color: var(--logo) !important;
 }
 .logo {
   height: calc(1.375rem + 1.5vw);
@@ -329,4 +289,26 @@ progress[value]::-webkit-progress-value {
   .logo {
     height: 2.5rem;
   }
+}
+
+.list-group-item {
+  background: rgba(0, 0, 0, 0);
+  border-color: rgba(255, 255, 255, 0.438);
+}
+.list-group-item-action {
+  color: white;
+}
+.list-group-item-action:hover {
+  background: rgba(255, 255, 255, 0.295);
+  color: white;
+}
+
+.card {
+  background: rgba(0, 0, 0, 0);
+  color: white;
+  border-color: white;
+}
+
+progress {
+  background: rgba(255, 255, 255, 0.21);
 }

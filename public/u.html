@@ -42,7 +42,7 @@
 <body>
     <div id="stickyMenu" class="stc sticky-top"></div>
 
-    <div class="container-lg bg-white pt-3 pb-3" style="min-height: calc(100vh - 60px);">
+    <div class="container-fluid bg-dark pt-3 pb-3" style="min-height: calc(100vh - 60px);">
         <div class="row">
             <div class="col-lg-4 pb-3">
                 <div class="sticky-top" style="top: 57px; z-index: 1010;">
@@ -64,22 +64,25 @@
                                 <a class="bi bi-three-dots-vertical text-decoration-none link-dark"
                                     data-bs-auto-close="true" id="shareDots" href="#" role="button" id="dropdownLink"
                                     data-bs-toggle="dropdown" aria-expanded="false"></a>
-                                <ul class="dropdown-menu dropdown-menu-lg-end">
+                                <ul class="dropdown-menu dropdown-menu-lg-end dropdown-menu-dark" id="profileOptions">
                                     <li><a class="dropdown-item copyLink" href="javascript:void(0);"
                                             data-clipboard-text="Just because you can doesn't mean you should — clipboard.js"
                                             id="copyLink">Get profile's link</a></li>
+                                    <!-- <li><a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal"
+                                            data-bs-target="#profileDetailsModal">Edit profile</a></li> -->
                                 </ul>
                             </div>
                         </div>
                     </div>
-                    <div id="detailsContainer" class="border border-1 rounded-bottom border-top-0 text-center">
+                    <div id="detailsContainer"
+                        class="border border-1 rounded-bottom border-top-0 text-center text-white">
                         <small id="creationTime">User from Jan 2021</small>
                         <p id="profileDetailsUsername"
                             class="m-0 fw-bold fs-3 d-flex align-items-center justify-content-center">
-                            <a class="text-decoration-none link-dark" href="#">/u</a>
-                            <a href="javascript:void()" class="disabled d-none bi bi-pencil-square link-dark fs-6"
+                            <a class="text-decoration-none link-light" href="#">/u</a>
+                            <!-- <a href="javascript:void()" class="disabled d-none bi bi-pencil-square link-light fs-6"
                                 data-bs-toggle="modal" data-bs-target="#profileDetailsModal" id="editBtn"
-                                style="line-height: 100%;"></a>
+                                style="line-height: 100%;"></a> -->
                         </p>
                         <div id="profileMinDetails">
                             <small id="profileDetailsGender" class="fst-italic"></small>
@@ -103,7 +106,7 @@
 
     <!-- Modal -->
     <div class="modal fade" id="profileDetailsModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-fullscreen-lg-down">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Profile details</h5>
@@ -160,7 +163,7 @@
     </div>
     <!-- Modal -->
     <div class="modal fade" id="postOptions" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-fullscreen-lg-down">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalTitle">Modal title</h5>

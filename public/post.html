@@ -42,7 +42,7 @@
     <style>
     </style>
     <div id="stickyMenu" class="stc sticky-top"></div>
-    <div class="container-lg bg-white pt-3 pb-3z" style="min-height: calc(100vh - 60px);">
+    <div class="container-fluid bg-dark pt-3 pb-3z" style="min-height: calc(100vh - 60px);">
         <div class="row">
             <div class="col-lg-4 pb-3">
                 <div class="sticky-top" style="top: 57px; z-index: 1010;">
@@ -72,12 +72,13 @@
                             </div>
                         </div>
                     </div>
-                    <div id="detailsContainer" class="border border-1 rounded-bottom border-top-0 text-center">
+                    <div id="detailsContainer"
+                        class="border border-1 rounded-bottom border-top-0 text-center text-white">
                         <small id="creationTime">User from Jan 2021</small>
                         <p id="profileDetailsUsername"
                             class="m-0 fw-bold fs-3 d-flex align-items-center justify-content-center">
-                            <a class="text-decoration-none link-dark" href="#">/u</a>
-                            <a href="javascript:void()" class="disabled d-none bi bi-pencil-square link-dark fs-6"
+                            <a class="text-decoration-none link-light" href="#">/u</a>
+                            <a href="javascript:void()" class="disabled d-none bi bi-pencil-square link-light fs-6"
                                 data-bs-toggle="modal" data-bs-target="#profileDetailsModal" id="editBtn"
                                 style="line-height: 100%;"></a>
                         </p>
@@ -90,7 +91,7 @@
                 </div>
             </div>
             <div class="col">
-                <div class="d-block text-center" id="player">
+                <div class="d-block text-center text-white" id="player">
                     <audio src="" id="audio">
                     </audio>
                     <h3 class="text-center m-1" id="title">Title</h3>
@@ -98,17 +99,19 @@
                     <div class="row">
                         <div class="col-auto p-0 d-flex justify-content-center align-items-center">
                             <button id="playBtn"
-                                class="btn btn-outline-secondary bi bi-play fs-2 rounded-circle d-flex justify-content-center align-items-center disabled m-1"
-                                onclick="play(this)" style="width: 60px; height: 60px;"></button>
+                                class="btn btn-outline-light bi bi-play fs-2 rounded-circle p-4 d-flex justify-content-center align-items-center disabled m-1"
+                                onclick="play(this)" style="width: 50px; height: 50px;"></button>
                         </div>
                         <div class="col d-flex justify-content-center align-items-center">
-                            <div id="progressBar" class="w-100 d-block position-relative" style="height: 50px;"
-                                data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Hello">
+                            <div id="progressBar" class="w-100 d-block position-relative" data-bs-toggle="tooltip"
+                                data-bs-placement="top" data-bs-original-title="Hello">
                                 <progress value="0" max="100"
-                                    class="border w-100 rounded bg-light overflow-hidden pe-none loadContainer"
+                                    class="border w-100 rounded overflow-hidden pe-none loadContainer"
                                     style="cursor: pointer;"></progress>
-                                <span id="currentTime" class="position-absolute bottom-0 start-0">00:00</span>
-                                <span id="duration" class="position-absolute bottom-0 end-0">08:21</span>
+                                <div id="time">
+                                    <span id="currentTime" class="float-start">00:00</span>
+                                    <span id="duration" class="float-end">08:21</span>
+                                </div>
                                 <span class="position-absolute bg-logo d-none text-light pe-none rounded fw-bold px-1"
                                     id="timer" style="font-size: 10px;">08:21</span>
                             </div>

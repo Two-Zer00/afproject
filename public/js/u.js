@@ -119,7 +119,7 @@ function createElement(id, object) {
   let dropdownBtn = document.createElement("a");
   dropdownBtn.id = "dropdownButton";
   dropdownBtn.classList.add(
-    "link-dark",
+    "link-light",
     "bi",
     "bi-three-dots-vertical",
     "streched-link"
@@ -128,7 +128,11 @@ function createElement(id, object) {
   dropdownBtn.setAttribute("aria-expanded", "false");
 
   let dropdownList = document.createElement("ul");
-  dropdownList.classList.add("dropdown-menu", "dropdown-menu-end");
+  dropdownList.classList.add(
+    "dropdown-menu",
+    "dropdown-menu-end",
+    "dropdown-menu-dark"
+  );
   dropdownList.setAttribute("aria-labelledby", dropdownBtn.id);
 
   dropdown.appendChild(dropdownBtn);
@@ -224,7 +228,7 @@ function createElement(id, object) {
 
   let cardBodyActionsPlay = document.createElement("a");
   cardBodyActionsPlay.classList.add(
-    "link-dark",
+    "link-light",
     "bi",
     "bi-play-fill",
     "p-1",
@@ -257,13 +261,28 @@ function confirmEmail() {
   });
 }
 
+function editProfile(val) {
+  if (val) {
+    let profileOptions = document.getElementById("profileOptions");
+    let optionContainer = document.createElement("li");
+    optionContainer.id = "editBtn";
+    let option = `<a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#profileDetailsModal">Edit profile</a>`;
+    optionContainer.innerHTML = option;
+    profileOptions.appendChild(optionContainer);
+  } else {
+    let option = document.getElementById("editBtn");
+    option.remove();
+  }
+}
+
 function validateUser(val) {
   //console.log(val);
   if (val) {
+    editProfile(val);
     userValidate = val;
-    document.getElementById("editBtn").classList.toggle("disabled");
-    document.getElementById("editBtn").classList.toggle("d-none");
     document.getElementById("editImageContainer").classList.toggle("pe-none");
+  } else {
+    editProfile(false);
   }
 }
 function next(item) {

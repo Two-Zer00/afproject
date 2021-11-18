@@ -29,10 +29,10 @@ const loginForm =
   '<label for="exampleDropdownFormPassword1" class="form-label">Password</label>' +
   '<input type="password" class="form-control" id="password" placeholder="Password" required>' +
   "</div>" +
-  '<button type="submit" class="btn btn-outline-dark" onclick="signIn(event)">Sign in</button>' +
+  '<button type="submit" class="btn btn-outline-light" onclick="signIn(event)">Sign in</button>' +
   "<div>" +
   '<label for="googleLogin" style="display: block;">Also login with:</label>' +
-  '<a href="javascript:void(0)" id="googleLogin" class="bi bi-google link-dark fs-3" onclick="loginUsingGoogle()"></a>' +
+  '<a href="javascript:void(0)" id="googleLogin" class="bi bi-google link-light fs-3" onclick="loginUsingGoogle()"></a>' +
   "</div>" +
   "</form>" +
   '<div class="dropdown-divider"></div>' +
@@ -40,10 +40,10 @@ const loginForm =
   '<a class="dropdown-item" href="#" onclick="resetPass()" id="signUp">Forgot password? Reset</a>' +
   "</div>";
 const menuHTML = `
-<div class="bg-white shadow-sm container-xl">
+<div class="bg-dark shadow-sm container-fluid">
   <ul class="nav justify-content-center fs-2">
     <li class="nav-item">
-      <a class="nav-link bi bi-house link-dark lh-sm" href="/"></a>
+      <a class="nav-link bi bi-house link-light lh-sm" href="/"></a>
     </li>
     <li class="nav-item">
       <a class="nav-link pe-none user-selection-none my-1 p-2 lh-1 bg-logo rounded-circle">
@@ -51,8 +51,8 @@ const menuHTML = `
       </a>
     </li>
     <li class="nav-item" id="myDropdown">
-      <a class="nav-link bi bi-person link-dark lh-sm" id="dropdownMenuButton" data-bs-toggle="dropdown" data-bs-auto-close="outside" data-bs-reference="parent" aria-expanded="false" href="#"></a>
-      <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton" id="dropdown">
+      <a class="nav-link bi bi-person link-light lh-sm" id="dropdownMenuButton" data-bs-toggle="dropdown" data-bs-auto-close="outside" data-bs-reference="parent" aria-expanded="false" href="#"></a>
+      <div class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="dropdownMenuButton" id="dropdown">
         <div id="loginContainer"></div>
       </div>
     </li>
@@ -112,4 +112,6 @@ const uploadFloatButton =
 
 const requestForm = '<button class="btn btn-secondary">request</button>';
 
-const emailVerify = '<span class="bi bi-patch-check"></span>';
+const emailVerify = '<span class="bi bi-patch-check text-logo"></span>';
+
+const verifedProfile = "Verifed profile";
