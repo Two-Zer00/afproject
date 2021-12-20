@@ -26,17 +26,17 @@
 
   <link rel="stylesheet" href="../css/styles.css">
   <!-- update the version number as needed -->
-  <script defer src="/__/firebase/8.3.1/firebase-app.js"></script>
+  <script defer src="/__/firebase/8.10.0/firebase-app.js"></script>
   <!-- include only the Firebase features as you need -->
-  <script defer src="/__/firebase/8.3.1/firebase-auth.js"></script>
-  <script defer src="/__/firebase/8.3.1/firebase-database.js"></script>
-  <script defer src="/__/firebase/8.3.1/firebase-firestore.js"></script>
-  <script defer src="/__/firebase/8.3.1/firebase-storage.js"></script>
+  <script defer src="/__/firebase/8.10.0/firebase-auth.js"></script>
+  <script defer src="/__/firebase/8.10.0/firebase-database.js"></script>
+  <script defer src="/__/firebase/8.10.0/firebase-firestore.js"></script>
+  <script defer src="/__/firebase/8.10.0/firebase-storage.js"></script>
   <!-- 
       initialize the SDK after all desired features are loaded, set useEmulator to false
       to avoid connecting the SDK to running emulators.
     -->
-  <script defer src="/__/firebase/init.js"></script>
+  <script defer src="/__/firebase/init.js?useEmulator=true"></script>
 
 </head>
 
@@ -68,9 +68,9 @@
 
   </div>
   <div id="uploadModalContainer"></div>
-  <div class="toast-container fixed-bottom start-50 translate-middle-x" style="bottom: 10px;" id="toastContainer">
+  <div class="toast-container fixed-bottom start-50 translate-middle-x" style="bottom: 30px;" id="toastContainer">
   </div>
-  <div id="floatButton"></div>
+  <div id="floatButton" class="fixed-bottom" style="right: 10px; bottom: 10px; left: unset;"></div>
   <script src="js/modules.js"></script>
   <script src="js/color-thief.umd.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>

@@ -26,42 +26,50 @@
     <link rel="stylesheet" href="css/styles.css">
 
     <!-- update the version number as needed -->
-    <script defer src="/__/firebase/8.3.1/firebase-app.js"></script>
+    <script defer src="/__/firebase/8.10.0/firebase-app.js"></script>
     <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/8.3.1/firebase-auth.js"></script>
-    <script defer src="/__/firebase/8.3.1/firebase-database.js"></script>
-    <script defer src="/__/firebase/8.3.1/firebase-firestore.js"></script>
-    <script defer src="/__/firebase/8.3.1/firebase-storage.js"></script>
+    <script defer src="/__/firebase/8.10.0/firebase-auth.js"></script>
+    <script defer src="/__/firebase/8.10.0/firebase-database.js"></script>
+    <script defer src="/__/firebase/8.10.0/firebase-firestore.js"></script>
+    <script defer src="/__/firebase/8.10.0/firebase-storage.js"></script>
     <!-- 
       initialize the SDK after all desired features are loaded, set useEmulator to false
       to avoid connecting the SDK to running emulators.
     -->
-    <script defer src="/__/firebase/init.js"></script>
+    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
 </head>
 
 <body>
-    <div id="stickyMenu" class="stc sticky-top"></div>
+    <div id="stickyMenu" class="sticky-top"></div>
 
     <div class="container-fluid bg-dark pt-3 pb-3" style="min-height: calc(100vh - 60px);">
         <div class="row">
             <div class="col-lg-4 pb-3">
                 <div class="sticky-top" style="top: 57px; z-index: 1010;">
-                    <div class="d-flex justify-content-center align-items-center rounded-top border border-1 position-relative"
+                    <div class="d-flex justify-content-center align-items-center flex-column rounded-top border border-1 position-relative p-2"
                         style="width: 100%; min-height: 200px; background-color: rgba(206, 206, 206, 0.534);"
                         id="imageContainer">
-                        <img src="" alt="" crossorigin="anonymous"
-                            style="height: 150px; min-width: 150px; max-width: 150px; object-fit: cover; background-color: rgba(206, 206, 206, 0.534);"
-                            id="profileImage" class="rounded-circle border border-3 mt-1 mb-1">
-                        <div style="height: 150px; width: 150px;"
-                            class="position-absolute rounded-circle d-flex justify-content-center align-items-center pe-none"
-                            id="editImageContainer">
-                            <span class="bi bi-camera-fill text-decoration-none link-light pe-none d-none"
-                                style="font-size: 37.5px;  text-shadow: 0 0 3px black; line-height: 25px;"></span>
+                        <div class="position-relative d-flex justify-content-center align-items-center">
+                            <img src="" alt="" crossorigin="anonymous"
+                                style="height: 150px; min-width: 150px; max-width: 150px; object-fit: cover; background-color: rgba(206, 206, 206, 0.534);"
+                                id="profileImage" class="rounded-circle border border-3 mt-1 mb-1">
+                            <div style="height: 150px; width: 150px;"
+                                class="position-absolute rounded-circle d-flex justify-content-center align-items-center pe-none"
+                                id="editImageContainer">
+                                <span class="bi bi-camera-fill text-decoration-none link-light pe-none d-none"
+                                    style="font-size: 37.5px;  text-shadow: 0 0 3px black; line-height: 25px;"></span>
+                            </div>
                         </div>
                         <input type="file" class="d-none" id="profileImageInput" accept="image/*">
                         <div class="position-absolute top-0 end-0 p-2">
-                            <div class="dropdown">
-                                <a class="bi bi-three-dots-vertical text-decoration-none link-dark"
+                            <div class="d-inline-block text-light" id="counters">
+                                <div class="d-flex align-items-center justify-content-center lh-1">
+                                    <p class="m-0 me-1" id="followers">-</p>
+                                    <span class="bi bi-people align-middle" title="Followers"></span>
+                                </div>
+                            </div>
+                            <div class="dropdown d-inline-block">
+                                <a class="bi bi-three-dots-vertical text-decoration-none text-light"
                                     data-bs-auto-close="true" id="shareDots" href="#" role="button" id="dropdownLink"
                                     data-bs-toggle="dropdown" aria-expanded="false"></a>
                                 <ul class="dropdown-menu dropdown-menu-lg-end dropdown-menu-dark" id="profileOptions">
@@ -73,6 +81,10 @@
                                 </ul>
                             </div>
                         </div>
+                        <div title="Login to start follow user" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                            <a href="javascript:void(0)" class="btn btn-outline-light disabled"
+                                id="followButton">Follow</a>
+                        </div>
                     </div>
                     <div id="detailsContainer"
                         class="border border-1 rounded-bottom border-top-0 text-center text-white">
@@ -80,9 +92,6 @@
                         <p id="profileDetailsUsername"
                             class="m-0 fw-bold fs-3 d-flex align-items-center justify-content-center">
                             <a class="text-decoration-none link-light" href="#">/u</a>
-                            <!-- <a href="javascript:void()" class="disabled d-none bi bi-pencil-square link-light fs-6"
-                                data-bs-toggle="modal" data-bs-target="#profileDetailsModal" id="editBtn"
-                                style="line-height: 100%;"></a> -->
                         </p>
                         <div id="profileMinDetails">
                             <small id="profileDetailsGender" class="fst-italic"></small>
@@ -96,7 +105,7 @@
                 <div id="cardContainerParent">
                 </div>
                 <div class="d-block text-center" id="spinner">
-                    <div class="spinner-grow text-dark" role="status" style="width: 7rem; height: 7rem;">
+                    <div class="spinner-grow text-light" role="status" style="width: 7rem; height: 7rem;">
                         <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
@@ -107,9 +116,9 @@
     <!-- Modal -->
     <div class="modal fade" id="profileDetailsModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-fullscreen-lg-down">
-            <div class="modal-content">
+            <div class="modal-content bg-dark">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Profile details</h5>
+                    <h5 class="modal-title text-white" id="exampleModalLabel">Profile details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -134,8 +143,8 @@
                                 </div>
                             </div>
                             <div class="col">
-                                <select class="form-select" aria-label="Default select example" style="height: 100%;"
-                                    name="gender" required>
+                                <select class="form-select h-100" aria-label="Default select example" name="gender"
+                                    required>
                                     <option selected disabled>Gender</option>
                                     <option value="0">Female</option>
                                     <option value="1">Male</option>
@@ -164,12 +173,12 @@
     <!-- Modal -->
     <div class="modal fade" id="postOptions" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-fullscreen-lg-down">
-            <div class="modal-content">
+            <div class="modal-content bg-dark">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">Modal title</h5>
+                    <h5 class="modal-title text-white" id="modalTitle">Modal title</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body text-center" id="modalBody">
+                <div class="modal-body text-center text-white" id="modalBody">
 
                 </div>
                 <div class="modal-footer">
@@ -182,9 +191,9 @@
 
     <div id="uploadModalContainer"></div>
 
-    <div class="toast-container fixed-bottom start-50 translate-middle-x" style="bottom: 10px;" id="toastContainer">
+    <div class="toast-container fixed-bottom start-50 translate-middle-x" style="bottom: 30px;" id="toastContainer">
     </div>
-    <div id="floatButton"></div>
+    <div id="floatButton" class="fixed-bottom" style="right: 10px; bottom: 10px; left: unset;"></div>
     <script src="js/modules.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
     <script src="js/color-thief.umd.js"></script>

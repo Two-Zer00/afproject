@@ -9,6 +9,7 @@ let userInfo = {};
 let uploadBtn;
 let clipboard = new ClipboardJS(".copyLink");
 document.getElementById("stickyMenu").innerHTML = menuHTML;
+
 //document.getElementById("stickyMenu").classList.add("sticky-top");/
 
 window.addEventListener("load", () => {
@@ -20,11 +21,17 @@ window.addEventListener("load", () => {
     if (user) {
       console.warn("logged in");
       document.getElementById("uploadModalContainer").innerHTML = uploadHTML;
+      document.getElementById("uploadInput").addEventListener("change", (e) => {
+        let file = e.target.files[0];
+        if (file.size / 1024 / 1024 > 60) {
+          e.target.setCustomValidity("File size bigger than 60MB");
+        }
+      });
       uploadBtn = document.getElementById("uploadButton");
-      document.getElementById("floatButton").classList.add("fixed-bottom");
-      document.getElementById("floatButton").style.bottom = "10px";
-      document.getElementById("floatButton").style.right = "10px";
-      document.getElementById("floatButton").style.left = "unset";
+      // document.getElementById("floatButton").classList.add("fixed-bottom");
+      // document.getElementById("floatButton").style.bottom = "10px";
+      // document.getElementById("floatButton").style.right = "10px";
+      // document.getElementById("floatButton").style.left = "unset";
       document.getElementById("floatButton").innerHTML = uploadFloatButton;
     } else {
       console.warn("logged out");
@@ -130,6 +137,7 @@ myDropdown.addEventListener("hide.bs.dropdown", function () {
 var dropdownList = new bootstrap.Dropdown(
   document.querySelector("#dropdownMenuButton")
 );
+//dropdownList.toggle();
 function signIn(event) {
   event.preventDefault();
   const form = event.target.parentElement; //form
@@ -193,6 +201,7 @@ function loginUsingGoogle() {
       var user = result.user;
       // ...
       console.warn(result.user);
+      dropdownList.update();
       toast("Welcome!", 3000, "logged");
     })
     .catch((error) => {
@@ -209,6 +218,10 @@ function loginUsingGoogle() {
     });
 }
 
+function showLogin() {
+  console.log("show");
+  dropdownList.toggle();
+}
 /* GENERAL UTILITIES */
 
 //convert secs to time format
@@ -353,6 +366,7 @@ function pickTextColorBasedOnBgColorAdvanced(bgColor, lightColor, darkColor) {
     return Math.pow((col + 0.055) / 1.055, 2.4);
   });
   var L = 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+  console.warn(L);
   return L > 0.179 ? darkColor : lightColor;
 }
 
@@ -367,8 +381,8 @@ function clipboardShareLinkProfile(id) {
 }
 
 function toast(text, time, type) {
-  let toastType = "bi bi-emoji-neutral";
-  let colorStatus = "secondary text-light";
+  let toastType = "icon-main-logo";
+  let colorStatus = "logo text-light";
   switch (type) {
     case "clipboard":
       toastType = "bi bi-clipboard-check";
@@ -437,7 +451,7 @@ clipboard.on("success", function (e) {
 /* USER INFO FUNCTIONS */
 async function getImageURL(storage, id, element) {
   //console.info(id);
-  var pathReference = "/staticFiles/profileImageDefault.png";
+  var pathReference = "/staticFiles/defaultProfileImage.png";
   try {
     pathReference = await storage
       .ref("userPhotos/" + id + "/profileImage.jpg")
@@ -469,6 +483,8 @@ function getUserInfo(db, id, profile) {
       if (doc.exists) {
         let objTemp = doc.data();
         objTemp.userId = id;
+        //authUser = doc.data();
+        //authUser.userId = id;
         loadUserInfo(objTemp, profile);
         if (!profile) getUserPosts(id);
       } else {
@@ -581,7 +597,7 @@ function loadUserInfo(obj, profile) {
             { month: "long" }
           ).format(date);
           details.children[i].textContent =
-            "User since " + month + " " + date.getFullYear();
+            "User since" + " " + month + " " + date.getFullYear();
         } else if (!details.children[i].textContent) {
           details.children[i].textContent = "";
         }
@@ -602,6 +618,7 @@ function loadUserInfo(obj, profile) {
   }
 }
 function uploadFiles(file, date) {
+  //Emulator
   // Upload file and metadata to the object 'images/mountains.jpg'
   uploadTask = storage
     .ref()
@@ -658,7 +675,10 @@ function uploadFiles(file, date) {
             //console.log("Document written with ID: ", docRef.id);
             document
               .querySelector("#progressBar")
-              .children[0].classList.toggle("bg-success", true);
+              .children[0].classList.toggle("bg-secondary", false);
+            document
+              .querySelector("#progressBar")
+              .children[0].classList.toggle("primary-color-bg", true);
             document.querySelector("#menuAction").style.display = "block";
             document.querySelector("#toAudio").href = "/post?id=" + docRef.id;
             if (window.location.href.indexOf("u") != -1) {
@@ -673,10 +693,13 @@ function uploadFiles(file, date) {
   );
 }
 function cleanView() {
-  document.querySelector("#uploading").textContent = "Upload your audio";
+  document.querySelector("#uploading").textContent = "";
   document
     .querySelector("#progressBar")
-    .children[0].classList.toggle("bg-success", false);
+    .children[0].classList.toggle("bg-secondary", true);
+  document
+    .querySelector("#progressBar")
+    .children[0].classList.toggle("primary-color-bg", false);
   document.querySelector("#progressBar").style.display = "none";
   document.querySelector("#menuAction").style.display = "none";
   document.querySelector("#uploadFile").style.display = "block";
@@ -700,9 +723,6 @@ function loadUpload() {
     nsfw: form.nsfw.checked,
   };
   let file = form.file.files[0];
-  if (file.size / 1024 / 1024 > 60) {
-    form.file.setCustomValidity("File size bigger than 60MB");
-  }
   if (form.reportValidity() && file.type.includes("audio")) {
     uploadFiles(file, Date.now());
   }
@@ -712,4 +732,63 @@ function checkSize(element) {
   if (file.size / 1024 / 1024 > 60) {
     element.setCustomValidity("File size exceeds 60MB");
   }
+}
+function userElement(id) {
+  let infoContainer = document.createElement("div");
+  let infoHTML = `<div class="sticky-top" style="top: 57px; z-index: 1010;">
+  <div class="d-flex justify-content-center align-items-center rounded-top border border-1 position-relative"
+      style="width: 100%; min-height: 200px; background-color: rgba(206, 206, 206, 0.534);"
+      id="imageContainer">
+      <img src="" alt="" crossorigin="anonymous"
+          style="height: 150px; min-width: 150px; max-width: 150px; object-fit: cover; background-color: rgba(206, 206, 206, 0.534);"
+          id="profileImage" class="rounded-circle border border-3 mt-1 mb-1">
+      <div style="height: 150px; width: 150px;"
+          class="position-absolute rounded-circle d-flex justify-content-center align-items-center pe-none"
+          id="editImageContainer">
+          <span class="bi bi-camera-fill text-decoration-none link-light pe-none d-none"
+              style="font-size: 37.5px;  text-shadow: 0 0 3px black; line-height: 25px;"></span>
+      </div>
+      <input type="file" class="d-none" id="profileImageInput" accept="image/*">
+      <div class="position-absolute top-0 end-0 p-2">
+          <div class="dropdown">
+              <a class="bi bi-three-dots-vertical text-decoration-none link-dark"
+                  data-bs-auto-close="true" id="shareDots" href="#" role="button" id="dropdownLink"
+                  data-bs-toggle="dropdown" aria-expanded="false"></a>
+              <ul class="dropdown-menu dropdown-menu-lg-end dropdown-menu-dark" id="profileOptions">
+                  <li><a class="dropdown-item copyLink" href="javascript:void(0);"
+                          data-clipboard-text="Just because you can doesn't mean you should — clipboard.js"
+                          id="copyLink">Get profile's link</a></li>
+                  <!-- <li><a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal"
+                          data-bs-target="#profileDetailsModal">Edit profile</a></li> -->
+              </ul>
+          </div>
+      </div>
+  </div>
+  <div id="detailsContainer"
+      class="border border-1 rounded-bottom border-top-0 text-center text-white">
+      <small id="creationTime">User from Jan 2021</small>
+      <p id="profileDetailsUsername"
+          class="m-0 fw-bold fs-3 d-flex align-items-center justify-content-center">
+          <a class="text-decoration-none link-light" href="#">/u</a>
+          <!-- <a href="javascript:void()" class="disabled d-none bi bi-pencil-square link-light fs-6"
+              data-bs-toggle="modal" data-bs-target="#profileDetailsModal" id="editBtn"
+              style="line-height: 100%;"></a> -->
+      </p>
+      <div id="profileMinDetails">
+          <small id="profileDetailsGender" class="fst-italic"></small>
+      </div>
+      <div class="m-0 p-0 fw-light fs- text-break" id="profileDetailsDesc">
+      </div>
+  </div>
+</div>`;
+}
+async function checkUserFollows(userFollowing, userid) {
+  // let followingContent = await db
+  //   .collection("post")
+  //   .where("userId", "array-contains", userid)
+  //   .limit(10)
+  //   .get();
+  // console.log(followingContent.docs);
+  // followingContent.find((element.data()=>u));
+  //userFollowing.
 }

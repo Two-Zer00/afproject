@@ -2,6 +2,10 @@ let searchParams = new URLSearchParams(window.location.search);
 let id = searchParams.get("id");
 let newUser = false;
 let post = {};
+let authUser;
+// let dropdown = new bootstrap.Dropdown(
+//   document.querySelector("#dropdownMenuButton")
+// );
 let profileUpdateFormModal = new bootstrap.Modal(
   document.getElementById("profileDetailsModal")
 );
@@ -17,8 +21,6 @@ let postElementInUse;
 var userValidate = false;
 let image = document.getElementById("profileImage");
 
-//console.log(auth);
-
 document
   .getElementById("profileDetailsModal")
   .addEventListener("show.bs.modal", () => {
@@ -27,34 +29,78 @@ document
     );
   });
 
-window.addEventListener("load", () => {
+window.addEventListener("load", async () => {
   storage = firebase.storage();
   db = firebase.firestore();
-  //console.log(userInfo);
-  if (id && id != "undefined") {
-    getUserInfo(db, id, false);
-    //image.src = getImageURL(storage,id);
-    getImageURL(storage, id, image);
-  }
-  firebase.auth().onAuthStateChanged(function (user) {
+  firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {
-      if (id && id === user.uid) {
-        validateUser(true);
-      } else if (userInfo && userInfo.id === user.uid) {
-        validateUser(true);
-      } else if (!id) {
-        console.log("Getting credential from auth");
-        getUserInfo(db, user.uid, false);
-        getImageURL(storage, user.uid, image);
-        validateUser(true);
-        if (user.emailVerified) {
-          document.getElementById("emailVerified").remove();
-        }
+      await getAuthUserInfo(user.uid);
+      checkUserFollows(authUser);
+      validateUser();
+      if (id) {
+        userInfo = await getUserInfomation(id);
+      } else {
+        userInfo = await getUserInfomation(user.uid);
       }
-    } else if (!id) {
-      window.location.replace("/");
+      ownProfile();
+    } else {
+      if (id) {
+        ownProfile();
+        userInfo = await getUserInfomation(id);
+      } else {
+        window.location.replace("/");
+      }
+    }
+    if (userInfo.username) {
+      loadUserInformation(userInfo);
+      getUserPosts(userInfo.id);
+      getProfileImage(userInfo.id);
     }
   });
+
+  // if (id && id != "undefined") {
+  //   let userAuth = firebase.auth().onAuthStateChanged(async function (user) {
+  //     return user;
+  //   });
+  //   console.log(userAuth);
+  //   ownProfile(id);
+  //   userInfo = await getUserInfomation(id);
+  //   if (userInfo.username) {
+  //     //loadUserInformation(userInfo);
+  //     getImageURL(storage, id, image);
+  //   }
+  // } else {
+  //   let userAuth = await firebase.auth().onAuthStateChanged(user);
+  //   console.log(userAuth);
+  // }
+  // firebase.auth().onAuthStateChanged(async function (user) {
+  //   if (user) {
+  //     await getAuthUserInfo(user.uid);
+  //     checkUserFollows(authUser);
+  //     if (id && id === user.uid) {
+  //       validateUser(true);
+  //       //loadUserInformation(user.uid);
+  //     } else if (userInfo && userInfo.id === user.uid) {
+  //       validateUser(true);
+  //     } else if (!id) {
+  //       console.log("Getting credential from auth");
+  //       validateUser(true);
+  //       userInfo = await getUserInfomation(user.uid);
+  //       ownProfile(user.uid);
+  //       if (userInfo.username) {
+  //         console.log("a");
+  //         loadUserInformation(userInfo);
+  //         getImageURL(storage, user.uid, image);
+  //       }
+  //       //getCountFollowers(user.uid);
+  //       if (user.emailVerified) {
+  //         document.getElementById("emailVerified").remove();
+  //       }
+  //     }
+  //   } else if (!id) {
+  //     //window.location.replace("/");
+  //   }
+  // });
 });
 
 clipboard.on("success", function (e) {
@@ -74,10 +120,12 @@ function getUserPosts(id) {
           createElement(doc.id, doc.data());
         });
       } else {
+        document
+          .getElementById("cardContainerParent")
+          .classList.add("text-light");
         document.getElementById("cardContainerParent").textContent =
           "This user had no posts yet.";
       }
-      //document.getElementById('cardContainerParent').classList.remove('load');
     })
     .catch((error) => {
       console.log("Error getting documents: ", error);
@@ -85,7 +133,6 @@ function getUserPosts(id) {
 
   document.getElementById("spinner").classList.add("d-none");
 }
-
 function createElement(id, object) {
   let cardElement = document.createElement("div");
   cardElement.classList.add("card", "w-100", "mb-2", "position-relative");
@@ -250,7 +297,6 @@ function createElement(id, object) {
     a.appendChild(cardElement);*/
   document.querySelector("#cardContainerParent").appendChild(cardElement);
 }
-
 function confirmEmail() {
   auth.currentUser.sendEmailVerification().then(() => {
     toast(
@@ -260,9 +306,9 @@ function confirmEmail() {
     );
   });
 }
-
 function editProfile(val) {
-  if (val) {
+  //console.trace("editButton");
+  if (val && !document.getElementById("editBtn")) {
     let profileOptions = document.getElementById("profileOptions");
     let optionContainer = document.createElement("li");
     optionContainer.id = "editBtn";
@@ -271,17 +317,23 @@ function editProfile(val) {
     profileOptions.appendChild(optionContainer);
   } else {
     let option = document.getElementById("editBtn");
-    option.remove();
+    if (option) {
+      option.remove();
+    }
   }
 }
-
-function validateUser(val) {
-  //console.log(val);
-  if (val) {
-    editProfile(val);
-    userValidate = val;
+function validateUser() {
+  if (
+    (authUser && !id) ||
+    authUser?.id === id ||
+    authUser?.id === userInfo?.id
+  ) {
+    console.warn("User validated");
+    editProfile(true);
+    userValidate = true;
     document.getElementById("editImageContainer").classList.toggle("pe-none");
   } else {
+    console.warn("User not validated", authUser.id, id, userInfo.id);
     editProfile(false);
   }
 }
@@ -531,6 +583,7 @@ document.getElementById("saveProfileBtn").addEventListener("click", () => {
     username: profileDetailsform.username.value.trim(),
     gender: profileDetailsform.gender.value,
     desc: profileDetailsform.desc.value.trim(),
+    following: [],
   };
   if (newUser && profileDetailsform.checkValidity()) {
     obj.creationTime = new Date(user().metadata.creationTime).getTime();
@@ -541,9 +594,19 @@ document.getElementById("saveProfileBtn").addEventListener("click", () => {
       .then(() => {
         loadUserInfo(obj);
         userInfo = obj;
-        userInfo.userId = user().uid;
+        userInfo.id = user().uid;
         console.warn(obj);
-        //myAlert('Profile details created succesfully');
+        newUser = false;
+        getUserPosts(userInfo?.id);
+        getProfileImage(userInfo?.id);
+        validateUser();
+        ownProfile();
+        document
+          .getElementById("editBtn")
+          .children[0].removeAttribute("data-bs-target");
+        document
+          .getElementById("editBtn")
+          .children[0].setAttribute("data-bs-target", "#profileDetailsModal");
         setTimeout(() => {
           profileUpdateFormModal.hide();
         }, 500);
@@ -612,8 +675,8 @@ document
 document
   .getElementById("editImageContainer")
   .addEventListener("click", (event) => {
-    let element = event.target;
-    let imageInput = element.parentElement.querySelector("input");
+    let element = document.getElementById("imageContainer");
+    let imageInput = element.querySelector("input");
     imageInput.click();
   });
 
@@ -696,11 +759,192 @@ document
   });
 
 image.addEventListener("load", function () {
+  //console.log("image loaded ", image);
   const colorRGB = colorThief.getColor(image);
+  const colorRGBText = "" + colorRGB[0] + colorRGB[1] + colorRGB[2];
   const color =
     "rgb(" + colorRGB[0] + "," + colorRGB[1] + "," + colorRGB[2] + ")";
-  image.parentElement.style.backgroundColor = color;
+  //image.parentElement.style.backgroundColor = color;
   //console.log(pickTextColorBasedOnBgColorAdvanced(color,'#FFFFFF','#000000'));
-  document.getElementById("shareDots").style.color =
-    pickTextColorBasedOnBgColorAdvanced(color, "#fff", "#000");
+  console.log(
+    colorRGBText,
+    pickTextColorBasedOnBgColorAdvanced(colorRGBText, "text-light", "text-dark")
+  );
+  document.getElementById("imageContainer").style.backgroundColor = color;
+
+  if (
+    pickTextColorBasedOnBgColorAdvanced(colorRGBText, "light", "dark") ===
+    "dark"
+  ) {
+    document.getElementById("counters").classList.toggle("text-dark");
+    document.getElementById("shareDots").classList.toggle("text-dark");
+  }
 });
+
+const followButton = document.getElementById("followButton");
+new bootstrap.Tooltip(followButton.parentElement);
+
+followButton.addEventListener("click", () => {
+  showLogin();
+  if (authUser && userInfo.username) {
+    follow(following);
+  } else {
+    if (!userInfo) {
+      toast("Not found user");
+    } else {
+      toast("Please log in to be able to follow this user.", 3000);
+    }
+  }
+});
+let following = false;
+async function getAuthUserInfo(id) {
+  authUser = await db.collection("user").doc(id).get();
+  if (authUser.exists) {
+    authUser = authUser.data();
+    authUser.id = id;
+  }
+  //checkUserFollows(authUser);
+}
+
+async function follow(state) {
+  if (state) {
+    await db
+      .collection("user")
+      .doc(authUser.id)
+      .update({
+        following: firebase.firestore.FieldValue.arrayRemove(userInfo.id),
+      });
+    toast(`Not following`, 2000, "");
+    followButton.innerText = "Follow";
+    following = false;
+    let followers = document.getElementById("followers");
+    followers.innerText = parseInt(followers.innerText) - 1;
+  } else {
+    await db
+      .collection("user")
+      .doc(authUser.id)
+      .update({
+        following: firebase.firestore.FieldValue.arrayUnion(userInfo.id),
+      });
+    toast(`Following`, 2000, "");
+    followButton.innerText = "Following";
+    following = true;
+    let followers = document.getElementById("followers");
+    followers.innerText = parseInt(followers.innerText) + 1;
+  }
+}
+function ownProfile() {
+  if ((userInfo && id && id === authUser?.id) || (authUser && !id)) {
+    console.warn("own profile", id, userInfo.id);
+    followButton.classList.add("d-none");
+  }
+}
+function checkUserFollows(data) {
+  console.warn(data.id, userInfo.id);
+  followButton.classList.remove("disabled");
+  followButton.parentElement.removeAttribute("title");
+  if (
+    data.following &&
+    data.following.find((element) => element === userInfo.id)
+  ) {
+    followButton.innerText = "Following";
+    following = true;
+  }
+}
+async function getCountFollowers(id) {
+  let followers = (
+    await db.collection("user").where("following", "array-contains", id).get()
+  ).docs.length;
+  if (followers > 1000) {
+    return followers / 1000 + "K";
+  } else {
+    return followers;
+  }
+}
+async function getUserInfomation(id) {
+  let userData = await db.collection("user").doc(id).get();
+  if (userData.exists) {
+    console.log(userData.exists);
+    userData = userData.data();
+    userData.id = id;
+    return userData;
+  } else {
+    newUser = true;
+    if (user() && userValidate) {
+      newProfileUpdate._element
+        .getElementsByClassName("modal-header")[0]
+        .getElementsByTagName("button")[0].disabled = true;
+      newProfileUpdate._element
+        .getElementsByClassName("modal-footer")[0]
+        .getElementsByTagName("button")[0].disabled = true;
+      newProfileUpdate.show();
+      toast(
+        "To activate your profile, please fill out all the field or at least the required ones(username)",
+        5000,
+        "profile updated"
+      );
+    } else {
+      toast("User id not found", 5000, "logged out");
+    }
+  }
+}
+const USER_DETAILS_TEXT = [
+  ["No specify &#9793;", "Female &#9792;", "Male &#9794;"],
+  ["User since"],
+];
+async function loadUserInformation(userData) {
+  let details = document.getElementById("detailsContainer").children;
+  let username = details.profileDetailsUsername;
+  let gender = details.profileMinDetails;
+  let desc = details.profileDetailsDesc;
+  let creationTime = details.creationTime;
+
+  username.querySelector("a").removeAttribute("href");
+
+  const date = new Date(userData.creationTime);
+  console.warn(date.getFullYear());
+  const month = new Intl.DateTimeFormat(
+    navigator.language || navigator.userLanguage,
+    { month: "long" }
+  ).format(date);
+  username.querySelector("a").textContent = userData.username;
+  switch (userData.gender) {
+    case 0:
+      gender.children.profileDetailsGender.innerHTML = USER_DETAILS_TEXT[0][1];
+      break;
+    case 1:
+      gender.children.profileDetailsGender.innerHTML = USER_DETAILS_TEXT[0][2];
+      break;
+    default:
+      gender.children.profileDetailsGender.innerHTML = USER_DETAILS_TEXT[0][0];
+      break;
+  }
+  desc.textContent = userData.desc;
+  creationTime.textContent =
+    USER_DETAILS_TEXT[1][0] + " " + month + " " + date.getFullYear();
+  let followers = document.getElementById("followers");
+  followers.textContent = await getCountFollowers(userData.id);
+  if (!id) {
+    document
+      .getElementById("copyLink")
+      .setAttribute(
+        "data-clipboard-text",
+        window.location.href + "?id=" + user().uid
+      );
+  } else {
+    document
+      .getElementById("copyLink")
+      .setAttribute("data-clipboard-text", window.location.href);
+  }
+}
+
+async function getProfileImage(id) {
+  var pathReference = "/staticFiles/defaultProfileImage.png";
+  try {
+    pathReference = await storage
+      .ref("userPhotos/" + id + "/profileImage.jpg")
+      .getDownloadURL();
+  } catch (error) {}
+  //console.log(pathReference);
+  image.src = pathReference;
+}
