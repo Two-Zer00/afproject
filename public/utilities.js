@@ -662,8 +662,8 @@ function uploadFiles(file, date) {
       //cleanView();
       console.log(error.code);
       //var myModalEl = document.getElementById('myModal')
-      var modal = bootstrap.Modal.getInstance(uploadModal); // Returns a Bootstrap modal instance
-      modal.hide();
+      //var modal = bootstrap.Modal.getInstance(uploadModal); // Returns a Bootstrap modal instance
+      //modal.hide();
       cleanView();
       if (error.code === "storage/unauthorized") {
         toast(
