@@ -898,9 +898,13 @@ async function loadUserInformation(userData) {
   let gender = details.profileMinDetails;
   let desc = details.profileDetailsDesc;
   let creationTime = details.creationTime;
-
   username.querySelector("a").removeAttribute("href");
-
+  if (userData.verify) {
+    let verify = document.createElement("span");
+    verify.classList.add("icon-verification-fill", "fs-4", "text-logo");
+    verify.title = verifedProfile;
+    username.appendChild(verify);
+  }
   const date = new Date(userData.creationTime);
   console.warn(date.getFullYear());
   const month = new Intl.DateTimeFormat(

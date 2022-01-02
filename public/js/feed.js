@@ -4,9 +4,10 @@ window.addEventListener("load", () => {
   auth = firebase.auth();
   auth.onAuthStateChanged(async (user) => {
     if (user) {
+      console.log(user.uid);
       let userData = (await db.collection("user").doc(user.uid).get()).data();
       console.log(userData?.following);
-      if (userData?.following.length > 0) {
+      if (userData?.following?.length > 0) {
         let followingContent = await db
           .collection("post")
           .where("userId", "in", userData.following)

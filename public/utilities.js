@@ -660,7 +660,21 @@ function uploadFiles(file, date) {
     },
     function (error) {
       //cleanView();
-      toast(error.message, 2000, "upload failed");
+      console.log(error.code);
+      //var myModalEl = document.getElementById('myModal')
+      var modal = bootstrap.Modal.getInstance(uploadModal); // Returns a Bootstrap modal instance
+      modal.hide();
+      cleanView();
+      if (error.code === "storage/unauthorized") {
+        toast(
+          `${error.code}<br>Please check if you already verify you email adress`,
+          6000,
+          "upload failed"
+        );
+      } else {
+        toast(error.code, 6000, "upload failed");
+      }
+      upload;
     },
     function () {
       // Upload completed successfully, now we can get the download URL

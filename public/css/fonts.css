@@ -43,3 +43,11 @@
 .icon-microphone:before {
   content: "\62";
 }
+.icon-verification-fill:before {
+  content: "\63";
+  vertical-align: sub;
+}
+.icon-verification-stroke:before {
+  content: "\64";
+  vertical-align: sub;
+}
