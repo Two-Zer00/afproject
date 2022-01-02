@@ -149,6 +149,8 @@ label {
   --nsfw: #b3004a;
   --bs-red: #b3004a !important;
   --bs-danger: #b3004a !important;
+  --bs-blue: #8e02b1 !important;
+  --bs-primary: #8e02b1 !important;
 }
 .center {
   height: 100vh;
@@ -160,6 +162,17 @@ label {
 .bg-logo {
   background: var(--logo);
   color: white;
+}
+.btn-primary,
+.btn-primary:hover,
+.btn-primary:active {
+  background-color: var(--logo);
+  border-color: var(--logo);
+}
+.btn-primary:focus {
+  background-color: var(--logo);
+  border-color: var(--logo);
+  box-shadow: 0 0 0 0.25rem rgba(142, 2, 177, 0.5) !important;
 }
 .bg-danger {
   background-color: var(--bs-danger) !important;

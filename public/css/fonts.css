@@ -40,3 +40,6 @@
 .icon-main-logo:before {
   content: "\61";
 }
+.icon-microphone:before {
+  content: "\62";
+}

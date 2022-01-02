@@ -113,7 +113,7 @@ const uploadHTML =
 
 const uploadFloatButton =
   '<div id="uploadBtn" class="rounded-circle text-light border border-2 d-lg-none bg-logo" style="width: 75px; height: 75px;" data-bs-toggle="modal" data-bs-target="#uploadModal">' +
-  '<span class="icon-main-logo fs-1 d-flex justify-content-center align-items-center" style="height: 100%;"></span>' +
+  '<span class="icon-microphone fs-1 d-flex justify-content-center align-items-center" style="height: 100%;"></span>' +
   "</div>";
 
 const requestForm = '<button class="btn btn-secondary">request</button>';

@@ -14,6 +14,7 @@ window.addEventListener("load", () => {
           .get();
         console.log(followingContent.docs);
         postFeed(followingContent);
+        document.querySelector("#spinner").remove();
       } else {
         document
           .getElementById("feedContainer")
