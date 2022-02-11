@@ -3,6 +3,8 @@ let id = searchParams.get("id");
 let newUser = false;
 let post = {};
 let authUser;
+const followButton = document.getElementById("followButton");
+
 // let dropdown = new bootstrap.Dropdown(
 //   document.querySelector("#dropdownMenuButton")
 // );
@@ -29,6 +31,7 @@ document
     );
   });
 
+//title="Login to start follow user" data-bs-toggle="tooltip" data-bs-placement="bottom"
 window.addEventListener("load", async () => {
   storage = firebase.storage();
   db = firebase.firestore();
@@ -44,6 +47,13 @@ window.addEventListener("load", async () => {
       }
       ownProfile();
     } else {
+      followButton.parentElement.setAttribute(
+        "title",
+        "Login to start follow user"
+      );
+      followButton.parentElement.setAttribute("data-bs-toggle", "tooltip");
+      followButton.parentElement.setAttribute("data-bs-placement", "bottom");
+      new bootstrap.Tooltip(followButton.parentElement);
       if (id) {
         ownProfile();
         userInfo = await getUserInfomation(id);
@@ -781,9 +791,6 @@ image.addEventListener("load", function () {
   }
 });
 
-const followButton = document.getElementById("followButton");
-new bootstrap.Tooltip(followButton.parentElement);
-
 followButton.addEventListener("click", () => {
   showLogin();
   if (authUser && userInfo.username) {
@@ -901,7 +908,7 @@ async function loadUserInformation(userData) {
   username.querySelector("a").removeAttribute("href");
   if (userData.verify) {
     let verify = document.createElement("span");
-    verify.classList.add("icon-verification-fill", "fs-4", "text-logo");
+    verify.classList.add("icon-verification-fill", "fs-4", "text-logo", "ms-1");
     verify.title = verifedProfile;
     username.appendChild(verify);
   }
