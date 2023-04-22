@@ -79,7 +79,7 @@ function uploadFiles(file,date){
             console.log('Upload is paused');
         break;
         case firebase.storage.TaskState.RUNNING: // or 'running'
-            console.log('Upload is running');
+            console.log('Upload is running456');
         break;
         }
     }, function(error) {
@@ -101,7 +101,8 @@ function uploadFiles(file,date){
         }
     }, function() {
         // Upload completed successfully, now we can get the download URL
-        uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+        uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
+            console.log("FULL PATH",uploadTask.ref.fullPath);
             obj.fileURL = downloadURL;
             obj.userId = userDetails.id;
             obj.date = date;

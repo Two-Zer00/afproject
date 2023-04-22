@@ -29,10 +29,12 @@ window.addEventListener("load", () => {
     db.collection("post")
       .doc(id)
       .get()
-      .then((doc) => {
+      .then(async(doc) => {
         if (doc.exists) {
           console.log(doc.data());
-          audio.src = doc.data().fileURL;
+          let storage = firebase.storage();
+          var audioRef = storage.ref(doc.data().filePath);
+          audio.src = await audioRef.getDownloadURL(); 
           audio.crossOrigin = "anonymous";
           audio.addEventListener("loadeddata", () => {
             document.getElementById("playBtn").classList.remove("disabled");

@@ -249,7 +249,7 @@ String.prototype.toHHMMSS = function () {
 
 //Gives the difference in seconds, minutes, hours and days between the current date and the given date, if the difference is more than a month just show the date.
 function daysAgo(date) {
-  var difference = Date.now() - date;
+  var difference = Date.now() - date?.seconds * 1000;
 
   var daysDifference = Math.floor(difference / 1000 / 60 / 60 / 24);
   difference -= daysDifference * 1000 * 60 * 60 * 24;
@@ -263,7 +263,7 @@ function daysAgo(date) {
   var secondsDifference = Math.floor(difference / 1000);
 
   if (daysDifference > 30) {
-    return new Date(date).toDateString();
+    return new Date(date.seconds*1000).toDateString();
   } else if (daysDifference > 0) {
     return daysDifference + " day/s ago";
   } else if (hoursDifference > 0) {
@@ -651,7 +651,7 @@ function uploadFiles(file, date) {
           console.log("Upload is paused");
           break;
         case firebase.storage.TaskState.RUNNING: // or 'running'
-          console.log("Upload is running");
+          console.log("Upload is running000");
           break;
         case firebase.storage.TaskState.CANCELED: // or 'running'
           console.log("Upload is canceled");
@@ -679,10 +679,10 @@ function uploadFiles(file, date) {
     function () {
       // Upload completed successfully, now we can get the download URL
       uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
-        obj.fileURL = downloadURL;
+        console.log("FULL PATH",uploadTask.snapshot.ref.fullPath);
+        obj.filePath = uploadTask.snapshot.ref.fullPath;
         obj.userId = user().uid;
         obj.date = date;
-        obj.fileName = file.name;
         db.collection("post")
           .add(obj)
           .then((docRef) => {

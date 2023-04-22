@@ -163,7 +163,7 @@ document.getElementById('profileImageForm').getElementsByTagName('button')[0].ad
             console.log('Upload is paused');
             break;
         case firebase.storage.TaskState.RUNNING: // or 'running'
-            console.log('Upload is running');
+            console.log('Upload is running123');
             break;
         }
     }, 
@@ -231,7 +231,7 @@ document.getElementById('profileBannerForm').getElementsByTagName('button')[0].a
             console.log('Upload is paused');
             break;
         case firebase.storage.TaskState.RUNNING: // or 'running'
-            console.log('Upload is running');
+            console.log('Upload is running789');
             break;
         }
     }, 

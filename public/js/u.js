@@ -596,7 +596,7 @@ document.getElementById("saveProfileBtn").addEventListener("click", () => {
     following: [],
   };
   if (newUser && profileDetailsform.checkValidity()) {
-    obj.creationTime = new Date(user().metadata.creationTime).getTime();
+    obj.creationTime = firebase.auth().currentUser.metadata.creationTime;
     //console.log(obj);
     db.collection("user")
       .doc(user().uid)
