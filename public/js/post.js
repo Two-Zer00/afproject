@@ -53,7 +53,7 @@ window.addEventListener("load", () => {
           });
           player.title.textContent = doc.data().title;
           player.date.textContent = new Date(
-            doc.data().date
+            doc.data().date.seconds*1000
           ).toLocaleDateString();
           player.description.textContent = doc.data().desc;
           mediaMetada.title = player.title.textContent;
